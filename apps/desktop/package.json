@@ -2,14 +2,14 @@
   "name": "desktop",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "main": "dist-electron/main.cjs",
+  "main": "dist-electron/main.js",
   "scripts": {
-    "electron": "electron .",
+    "electron": "electron dist-electron/main.js",  
     "dev": "concurrently \"vite\" \"cross-env NODE_ENV=development npm run electron\"",
     "build": "vite build",
     "preview": "vite preview",
-    "build:main": "vite build --config vite.config.ts"
+    "build:main": "tsc -p tsconfig.electron.json",
+    "build:all": "npm run build && npm run build:main"
   },
   "dependencies": {
     "react": "^19.1.0",

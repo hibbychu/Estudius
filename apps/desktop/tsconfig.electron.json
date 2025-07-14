@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "CommonJS",
-    "outDir": "./dist-electron",
+    "module": "CommonJS",           // Important: output regular `.js` files
+    "outDir": "dist-electron",
+    "rootDir": "electron",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true
+    "strict": true
   },
-  "include": ["electron"]
+  "include": ["electron/main.ts", "electron/preload.ts"]
 }
