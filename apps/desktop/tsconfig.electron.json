@@ -1,12 +1,12 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",           // Important: output regular `.js` files
     "outDir": "dist-electron",
-    "rootDir": "electron",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "strict": true
+    "module": "commonjs",
+    "target": "es2020",
+    "isolatedModules": false,
+    "sourceMap": true
   },
-  "include": ["electron/main.ts", "electron/preload.ts"]
+  "include": ["electron/**/*.ts"],  // ONLY your Electron main files
+  "exclude": ["src", "node_modules"] // Exclude frontend React source and others
 }

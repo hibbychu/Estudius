@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "module": "ESNext",       // For ES module syntax, or "CommonJS" if you want CJS
-    "moduleResolution": "node",
+    "jsx": "react-jsx",   
+    "moduleResolution": "Node",
     "outDir": "dist-electron",
     "esModuleInterop": true,
     "allowJs": true,
@@ -10,5 +11,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["electron/**/*.ts"]
+  "include": ["electron/**/*.ts", "src"]
 }

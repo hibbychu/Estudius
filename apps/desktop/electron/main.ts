@@ -1,20 +1,31 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
+import * as url from 'url';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'), // Use preload.ts if you set it up
+      preload: path.join(__dirname, 'preload.js'), // must match the built preload script
+      contextIsolation: true, // secure context for renderer
+      nodeIntegration: false, // prevents node access in renderer
     },
   });
 
-  // Load your Vite dev server or built HTML
-  if (process.env.NODE_ENV === 'development') {
+  if (isDev) {
     win.loadURL('http://localhost:5173');
+    win.webContents.openDevTools();
   } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'));
+    win.loadURL(
+      url.format({
+        pathname: path.join(__dirname, '../dist/index.html'),
+        protocol: 'file:',
+        slashes: true,
+      })
+    );
   }
 }
 
@@ -22,10 +33,14 @@ app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
   });
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
