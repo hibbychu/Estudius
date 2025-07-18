@@ -10,7 +10,7 @@ import Onboarding from './pages/Onboarding';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="min-h-screen flex flex-col bg-sky-gradient">
         {/* Navigation Bar */}
         <nav className="bg-blue-600 text-white p-4 flex justify-evenly">
           {[
