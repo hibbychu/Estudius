@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import tailwind from '@tailwindcss/vite'
 
 export default defineConfig(({ command, mode }) => {
   // If you want to build both frontend and main in one config, you can conditionally build main here.
@@ -32,7 +33,7 @@ export default defineConfig(({ command, mode }) => {
 
   // Default frontend React config
   return {
-    plugins: [react()],
+    plugins: [react(), tailwind()],
     root: './',
     build: {
       outDir: 'dist',
