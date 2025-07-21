@@ -1,5 +1,6 @@
 import React from 'react';
 import FeatureCard from '../components/FeatureCard';
+import Timer from "../components/Timer";
 
 export default function Home() {
   const features = [
@@ -48,6 +49,7 @@ export default function Home() {
   return (
     <section className="p-8 max-w-4xl mx-auto bg-sky-gradient">
       {/* Hero Section */}
+      <Timer initialSeconds={1500} /> {/* 25-minute Pomodoro */}
       <div className="bg-blue-100 rounded-xl mb-10 p-8 flex flex-col items-center">
         {/* <img src="/assets/icons/brainwave.png" alt="AI Focus" className="w-20 h-20 mb-4" /> */}
         <h1 className="text-4xl font-extrabold text-blue-700 mb-2 text-center">
