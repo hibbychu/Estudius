@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 
 // Dummy data for music. Replace src with your own mp3s in /public/music/
 const MUSIC_LIST = [
+  { name: "Sielnce", src: "" },
   { name: "Fire Crackling", src: "/music/focus/fire.mp3" },
-  { name: "rain", src: "/music/focus/rain.mp3" },
-  { name: "light-rain", src: "/music/focus/light-rain.mp3" },
+  { name: "Rain", src: "/music/focus/rain.mp3" },
+  { name: "Light-Rain", src: "/music/focus/light-rain.mp3" },
+  { name: "Highway", src: "/music/focus/highway.mp3" },
+  { name: "Water", src: "/music/focus/water.mp3" },
 ];
 const BREAK_MUSIC_LIST = [
   { name: "Silent", src: "" },
-  { name: "rain", src: "/music/focus/rain.mp3" },
-  { name: "light-rain", src: "/music/focus/light-rain.mp3" },
 ];
 
 type Mode = "focus" | "break";
@@ -29,6 +30,31 @@ const Timer: React.FC = () => {
   const musicAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const prevModeRef = useRef<Mode>(mode);
+  const prevRunningRef = useRef<boolean>(running);
+
+  const [totalFocusSeconds, setTotalFocusSeconds] = useState(0); // accumulates actual focus time
+  const [cyclesCompleted, setCyclesCompleted] = useState(0); // completed pomodoro cycles
+
+// In your useEffect (for counting overall focus time)
+useEffect(() => {
+  let focusInterval = null;
+  if (running && mode === "focus" && secondsLeft > 0) {
+    focusInterval = setInterval(() => {
+      setTotalFocusSeconds(t => t + 1);
+    }, 1000);
+  }
+  return () => {
+    if (focusInterval) clearInterval(focusInterval);
+  };
+}, [running, mode, secondsLeft]);
+
+// In the useEffect for phase transitions, increment cycles at end of break
+useEffect(() => {
+  if (secondsLeft === 0 && mode === "focus") {
+    setCyclesCompleted(c => c + 1);
+  }
+  // ...
+}, [secondsLeft, mode]);
 
   // Reset timers if durations are changed (during pause only)
   useEffect(() => {
@@ -37,6 +63,23 @@ const Timer: React.FC = () => {
     }
     // eslint-disable-next-line
   }, [focusDuration, breakDuration, mode]);
+
+  useEffect(() => {
+    // Play start.mp3 only when starting focus mode from stop/pause or after a break
+    if (
+      running &&
+      mode === "focus" &&
+      secondsLeft === focusDuration &&
+      (!prevRunningRef.current || prevModeRef.current !== "focus")
+    ) {
+      if (startAudioRef.current) {
+        startAudioRef.current.currentTime = 0;
+        startAudioRef.current.play();
+      }
+    }
+    prevModeRef.current = mode;
+    prevRunningRef.current = running;
+  }, [running, mode, secondsLeft, focusDuration]);
 
   useEffect(() => {
     // only play music at the very *beginning* of focus mode, or if focusMusic changes while in focus mode
@@ -126,6 +169,10 @@ const Timer: React.FC = () => {
   return (
     <div className="flex flex-col max-w-md mx-auto items-center bg-white rounded-xl shadow p-8 space-y-6">
       <div className="flex flex-col items-center w-full">
+        <div className="flex justify-between w-full text-lg font-semibold my-2">
+          <span>Total Focus: {Math.floor(totalFocusSeconds / 60)}m {totalFocusSeconds % 60}s</span>
+          <span>Cycles: {cyclesCompleted}</span>
+        </div>
         <span
           className={`uppercase tracking-wide text-sm font-semibold ${mode === "focus" ? "text-blue-500" : "text-green-500"}`}>
           {mode === "focus" ? "Focus" : "Break"} Session
