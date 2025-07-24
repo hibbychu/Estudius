@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 // Dummy data for music. Replace src with your own mp3s in /public/music/
 const MUSIC_LIST = [
-  { name: "Sielnce", src: "" },
+  { name: "Silence", src: "" },
   { name: "Fire Crackling", src: "/music/focus/fire.mp3" },
   { name: "Rain", src: "/music/focus/rain.mp3" },
   { name: "Light-Rain", src: "/music/focus/light-rain.mp3" },

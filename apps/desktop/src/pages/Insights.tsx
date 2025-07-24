@@ -3,7 +3,7 @@ import React from 'react';
 export default function Insights() {
   return (
     <main className="p-8 max-w-5xl mx-auto">
-      <h1 className="text-4xl font-bold mb-8 text-gray-900">Insights</h1>
+      <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Insights</h1>
 
       <div className="grid gap-8 md:grid-cols-2">
         <div className="bg-white p-6 rounded-lg shadow-md">
