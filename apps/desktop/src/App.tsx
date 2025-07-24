@@ -6,13 +6,15 @@ import Home from './pages/Home';
 import Insights from './pages/Insights';
 import Settings from './pages/Settings';
 import Onboarding from './pages/Onboarding';
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col bg-sky-gradient">
         {/* Navigation Bar */}
-        <nav className="bg-blue-600 text-white p-4 flex justify-evenly">
+        <nav className="bg-white text-white p-4 flex justify-evenly">
           {[
             { to: '/', label: 'Home' },
             { to: '/insights', label: 'Insights' },
@@ -27,7 +29,7 @@ function App() {
                 `transition-colors duration-200 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
                   isActive
                     ? 'bg-white text-blue-600 font-semibold shadow'
-                    : 'hover:bg-blue-500 hover:text-white text-white'
+                    : 'text-gray-950 hover:bg-blue-600 hover:text-white'
                 }`
               }
             >
@@ -43,6 +45,8 @@ function App() {
             <Route path="/insights" element={<Insights />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/onboarding/signup" element={<SignUp />} />
+            <Route path="/onboarding/login" element={<Login />} />
           </Routes>
         </main>
 

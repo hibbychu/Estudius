@@ -167,7 +167,7 @@ useEffect(() => {
   const handleSeek = (v: number) => setSecondsLeft(v);
 
   return (
-    <div className="flex flex-col max-w-md mx-auto items-center bg-white rounded-xl shadow p-8 space-y-6">
+    <div className="flex flex-col max-w-md mx-auto my-2 items-center border border-gray-100 bg-white rounded-xl shadow p-8 space-y-6">
       <div className="flex flex-col items-center w-full">
         <div className="flex justify-between w-full text-lg font-semibold my-2">
           <span>Total Focus: {Math.floor(totalFocusSeconds / 60)}m {totalFocusSeconds % 60}s</span>

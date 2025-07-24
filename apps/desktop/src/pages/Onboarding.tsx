@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Onboarding() {
   return (
@@ -9,9 +10,11 @@ export default function Onboarding() {
       <p className="mb-6 text-gray-600 text-center">
         Let’s set up your preferences and personalize your experience.
       </p>
-      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium transition">
-        Start Setup
-      </button>
+      <Link to="/onboarding/signup">
+        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium transition duration-200">
+          Start Setup
+        </button>
+      </Link>
     </main>
   );
 }
