@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter } from "react-router-dom";
 import './styles/tailwind.css';
 import './styles/globals.css';
 import Home from './pages/Home';
@@ -11,7 +12,7 @@ import Login from './pages/Login';
 
 function App() {
   return (
-    <Router>
+    <HashRouter>
       <div className="min-h-screen flex flex-col bg-sky-gradient">
         {/* Navigation Bar */}
         <nav className="bg-white text-white p-4 flex justify-evenly">
@@ -55,7 +56,7 @@ function App() {
           © {new Date().getFullYear()} Estudius. All rights reserved.
         </footer>
       </div>
-    </Router>
+    </HashRouter>
   );
 }
 

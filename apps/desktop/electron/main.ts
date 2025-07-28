@@ -19,13 +19,10 @@ function createWindow() {
     win.loadURL('http://localhost:5173');
     win.webContents.openDevTools();
   } else {
-    win.loadURL(
-      url.format({
-        pathname: path.join(__dirname, '../dist/index.html'),
-        protocol: 'file:',
-        slashes: true,
-      })
-    );
+    // Load the built React app
+    const indexPath = path.join(__dirname, '../dist/index.html');
+    console.log('PROD: Loading file ->', indexPath);
+    win.loadFile(indexPath);
   }
 }
 

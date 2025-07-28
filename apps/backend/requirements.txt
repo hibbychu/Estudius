@@ -1,4 +1,10 @@
-fastapi
-uvicorn
-sqlalchemy
-pydantic
+fastapi>=0.95.0
+uvicorn[standard]>=0.23.0
+sqlalchemy>=2.0.0
+pydantic>=1.10.0
+pytest>=7.0.0
+httpx>=0.23.0
+pandas>=1.5.0
+scikit-learn>=1.2.2
+spacy>=3.5.0
+transformers>=4.30.0
