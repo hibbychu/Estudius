@@ -5,12 +5,13 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "electron": "electron dist-electron/main.js",
-    "dev": "concurrently \"vite\" \"cross-env NODE_ENV=development npm run electron\"",
+    "dev": "concurrently \"vite\" \"cross-env NODE_ENV=development npm run electron\" \"npm run eye-detect\"",
     "build": "vite build",
     "dist": "electron-builder",
     "preview": "vite preview",
     "build:main": "tsc -p tsconfig.electron.json",
-    "build:all": "npm run build && npm run build:main"
+    "build:all": "npm run build && npm run build:main",
+    "eye-detect": "python ../backend/app/eye_detector.py"
   },
   "build": {
     "appId": "com.yourcompany.estudius",

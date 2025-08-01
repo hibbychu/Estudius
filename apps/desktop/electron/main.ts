@@ -6,31 +6,33 @@ const isDev = process.env.NODE_ENV === 'development';
 
 let pythonProc: ChildProcess | null = null;
 
-function startPythonDetector() {
-  const pythonExecutable = path.join(__dirname, '..', '..', 'backend', 'venv', 'Scripts', 'python.exe');
-  const scriptPath = path.join(__dirname, '..', '..', 'backend', 'app', 'eye_detector.py');
+// function startPythonDetector() {
+//   const pythonExecutable = path.join(__dirname, '..', '..', 'backend', 'venv', 'Scripts', 'python.exe');
+//   const scriptPath = path.join(__dirname, '..', '..', 'backend', 'app', 'eye_detector.py');
+//   console.log('Attempting to run Python:', pythonExecutable);
+//   console.log('Attempting to run script:', scriptPath);
 
-  pythonProc = spawn(pythonExecutable, [scriptPath], {
-    stdio: 'inherit',
-    shell: false,
-    windowsHide: true,
-  });
+//   pythonProc = spawn(pythonExecutable, [scriptPath], {
+//     stdio: 'inherit',
+//     shell: false,
+//     windowsHide: true,
+//   });
 
-  pythonProc.on('error', (err) => {
-    console.error('Failed to start Python eye detector:', err);
-  });
+//   pythonProc.on('error', (err) => {
+//     console.error('Failed to start Python eye detector:', err);
+//   });
 
-  pythonProc.on('exit', (code, signal) => {
-    console.log(`Python eye detector exited with code ${code}, signal ${signal}`);
-  });
-}
+//   pythonProc.on('exit', (code, signal) => {
+//     console.log(`Python eye detector exited with code ${code}, signal ${signal}`);
+//   });
+// }
 
-function stopPythonDetector() {
-  if (pythonProc) {
-    pythonProc.kill();
-    pythonProc = null;
-  }
-}
+// function stopPythonDetector() {
+//   if (pythonProc) {
+//     pythonProc.kill();
+//     pythonProc = null;
+//   }
+// }
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -54,7 +56,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  startPythonDetector();  // Start Python backend automatically
+  //startPythonDetector();  // Start Python backend automatically
   createWindow();
 
   app.on('activate', () => {
@@ -65,12 +67,12 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  stopPythonDetector(); // Stop Python backend on app exit
+  //stopPythonDetector(); // Stop Python backend on app exit
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 app.on('before-quit', () => {
-  stopPythonDetector(); // Just in case, stop Python when quitting
+  //stopPythonDetector(); // Just in case, stop Python when quitting
 });
