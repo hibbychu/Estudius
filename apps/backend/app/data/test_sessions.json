@@ -1,0 +1,139 @@
+[
+  {
+    "date": "2025-07-28",
+    "sessions": [
+      {
+        "start": "2025-07-28T08:30:00",
+        "end": "2025-07-28T09:30:00",
+        "cycles": 2,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5], 
+        "totalFocusTimeMin": 50
+      },
+      {
+        "start": "2025-07-28T14:00:00",
+        "end": "2025-07-28T15:30:00",
+        "cycles": 3,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5, 15],
+        "totalFocusTimeMin": 75
+      }
+    ],
+    "totalFocusTimeMin": 125,
+    "totalSessions": 2
+  },
+  {
+    "date": "2025-07-29",
+    "sessions": [
+      {
+        "start": "2025-07-29T09:00:00",
+        "end": "2025-07-29T10:00:00",
+        "cycles": 2,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5],
+        "totalFocusTimeMin": 50
+      },
+      {
+        "start": "2025-07-29T20:00:00",
+        "end": "2025-07-29T21:00:00",
+        "cycles": 2,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5],
+        "totalFocusTimeMin": 50
+      }
+    ],
+    "totalFocusTimeMin": 100,
+    "totalSessions": 2
+  },
+  {
+    "date": "2025-07-30",
+    "sessions": [
+      {
+        "start": "2025-07-30T07:30:00",
+        "end": "2025-07-30T08:30:00",
+        "cycles": 2,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5],
+        "totalFocusTimeMin": 50
+      },
+      {
+        "start": "2025-07-30T19:00:00",
+        "end": "2025-07-30T20:30:00",
+        "cycles": 3,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5, 15],
+        "totalFocusTimeMin": 75
+      }
+    ],
+    "totalFocusTimeMin": 125,
+    "totalSessions": 2
+  },
+  {
+    "date": "2025-07-31",
+    "sessions": [
+      {
+        "start": "2025-07-31T10:00:00",
+        "end": "2025-07-31T11:30:00",
+        "cycles": 3,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5, 15],
+        "totalFocusTimeMin": 75
+      }
+    ],
+    "totalFocusTimeMin": 75,
+    "totalSessions": 1
+  },
+  {
+    "date": "2025-08-01",
+    "sessions": [
+      {
+        "start": "2025-08-01T09:00:00",
+        "end": "2025-08-01T11:00:00",
+        "cycles": 4,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5, 5, 15],
+        "totalFocusTimeMin": 100
+      }
+    ],
+    "totalFocusTimeMin": 100,
+    "totalSessions": 1
+  },
+  {
+    "date": "2025-08-02",
+    "sessions": [
+      {
+        "start": "2025-08-02T08:00:00",
+        "end": "2025-08-02T09:30:00",
+        "cycles": 3,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5, 15],
+        "totalFocusTimeMin": 75
+      },
+      {
+        "start": "2025-08-02T15:00:00",
+        "end": "2025-08-02T16:30:00",
+        "cycles": 3,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5, 15],
+        "totalFocusTimeMin": 75
+      }
+    ],
+    "totalFocusTimeMin": 150,
+    "totalSessions": 2
+  },
+  {
+    "date": "2025-08-03",
+    "sessions": [
+      {
+        "start": "2025-08-03T09:00:00",
+        "end": "2025-08-03T10:30:00",
+        "cycles": 3,
+        "cycleLengthMin": 25,
+        "breaks": [5, 5, 15],
+        "totalFocusTimeMin": 75
+      }
+    ],
+    "totalFocusTimeMin": 75,
+    "totalSessions": 1
+  }
+]
