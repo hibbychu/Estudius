@@ -48,9 +48,9 @@ function App() {
             <Route
               path="/insights"
               element={
-                <PrivateRoute>
+                //<PrivateRoute>
                   <Insights />
-                </PrivateRoute>
+                //</PrivateRoute>
               }
             />
             <Route path="/settings" element={<Settings />} />

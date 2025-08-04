@@ -5,7 +5,7 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "electron": "electron dist-electron/main.js",
-    "dev": "concurrently \"vite\" \"cross-env NODE_ENV=development npm run electron\" \"npm run eye-detect\"",
+    "dev": "concurrently \"vite\" \"cross-env NODE_ENV=development npm run electron\" \"npm run eye-detect\" \"cd ../backend && uvicorn app.main:app --host 127.0.0.1 --port 8005 --reload\"",
     "build": "vite build",
     "dist": "electron-builder",
     "preview": "vite preview",
