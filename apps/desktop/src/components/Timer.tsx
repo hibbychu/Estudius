@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useTimerStore } from '../state/store';
-import { useEyeDetectorStatus } from '../hooks/useEyeDetectorStatus';
+import { useTimerStore } from "../state/store";
+import { useEyeDetectorStatus } from "../hooks/useEyeDetectorStatus";
 
 // Music lists
 const MUSIC_LIST = [
@@ -11,8 +11,11 @@ const MUSIC_LIST = [
   { name: "Highway", src: "/music/focus/highway.mp3" },
   { name: "Water", src: "/music/focus/water.mp3" },
 ];
-const BREAK_MUSIC_LIST = [
-  { name: "Silent", src: "" },
+const BREAK_MUSIC_LIST = [{ name: "Silent", src: "" }];
+
+export const BACKGROUND_LIST = [
+  { name: "Default", src: "" },
+  { name: "Lofi Girl Video", type: "video", src: "/backgrounds/Lofi Girl.mp4" },
 ];
 
 type Mode = "focus" | "break";
@@ -33,6 +36,7 @@ const Timer: React.FC = () => {
     running,
     focusMusic,
     breakMusic,
+    background,
     totalFocusSeconds,
     cyclesCompleted,
     loading,
@@ -43,6 +47,7 @@ const Timer: React.FC = () => {
     setBreakDuration,
     setFocusMusic,
     setBreakMusic,
+    setBackground,
     start,
     pause,
     reset,
@@ -84,8 +89,14 @@ const Timer: React.FC = () => {
   useEffect(() => {
     if (secondsLeft === 0) {
       if (mode === "focus") {
-        if (endAudioRef.current) { endAudioRef.current.currentTime = 0; endAudioRef.current.play(); }
-        if (musicAudioRef.current) { musicAudioRef.current.pause(); musicAudioRef.current.currentTime = 0; }
+        if (endAudioRef.current) {
+          endAudioRef.current.currentTime = 0;
+          endAudioRef.current.play();
+        }
+        if (musicAudioRef.current) {
+          musicAudioRef.current.pause();
+          musicAudioRef.current.currentTime = 0;
+        }
         setTimeout(() => {
           incrementCycles();
           setMode("break");
@@ -133,7 +144,8 @@ const Timer: React.FC = () => {
     if (
       running &&
       mode === "focus" &&
-      (prevModeRef.current !== "focus" || focusMusic !== musicAudioRef.current?.src)
+      (prevModeRef.current !== "focus" ||
+        focusMusic !== musicAudioRef.current?.src)
     ) {
       if (musicAudioRef.current && focusMusic) {
         musicAudioRef.current.src = focusMusic;
@@ -166,7 +178,6 @@ const Timer: React.FC = () => {
   // --- UI ---
   return (
     <div className="flex flex-col max-w-md mx-auto my-2 border border-gray-100 bg-white rounded-xl shadow p-8 space-y-6">
-
       {loading && <p className="text-blue-500 font-semibold">Loading...</p>}
       {error && <p className="text-red-600 font-semibold">{error}</p>}
 
@@ -176,20 +187,23 @@ const Timer: React.FC = () => {
           id="eye-toggle"
           type="checkbox"
           checked={requireEyesToFocus}
-          onChange={() => setRequireEyesToFocus(e => !e)}
+          onChange={() => setRequireEyesToFocus((e) => !e)}
           className="mr-2"
         />
         <label htmlFor="eye-toggle" className="text-sm font-medium">
           Only count focus time if eyes detected
         </label>
         {requireEyesToFocus && (
-          <span className={eyesOnScreen ? "text-green-600" : "text-gray-500"} style={{ fontSize: '1.2em' }}>
+          <span
+            className={eyesOnScreen ? "text-green-600" : "text-gray-500"}
+            style={{ fontSize: "1.2em" }}
+          >
             {eyesOnScreen ? "👁️ Eyes detected" : "🙈 Eyes not detected"}
           </span>
         )}
       </div>
       {/* Paused warning if not detected */}
-      {(requireEyesToFocus && !eyesOnScreen && running) && (
+      {requireEyesToFocus && !eyesOnScreen && running && (
         <div className="bg-yellow-100 text-yellow-800 rounded px-2 py-1 mb-2 font-semibold">
           Timer paused: Eyes not detected!
         </div>
@@ -198,14 +212,17 @@ const Timer: React.FC = () => {
       {/* Timer Info and Cycles */}
       <div className="flex justify-between w-full items-center text-lg font-semibold mb-2">
         <span>
-          Total Focus: {Math.floor(totalFocusSeconds / 60)}m {totalFocusSeconds % 60}s
+          Total Focus: {Math.floor(totalFocusSeconds / 60)}m{" "}
+          {totalFocusSeconds % 60}s
         </span>
         <span>Cycles: {cyclesCompleted}</span>
         <button
           onClick={resetCycles}
           className="ml-4 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
           title="Reset Pomodoro Cycles"
-        >Reset Cycles</button>
+        >
+          Reset Cycles
+        </button>
       </div>
       <span
         className={`uppercase tracking-wide font-semibold ${
@@ -259,7 +276,9 @@ const Timer: React.FC = () => {
             onChange={(e) => setFocusDuration(Number(e.target.value))}
             className="accent-blue-500 flex-1"
           />
-          <span className="w-8 text-right">{Math.floor(focusDuration / 60)}m</span>
+          <span className="w-8 text-right">
+            {Math.floor(focusDuration / 60)}m
+          </span>
         </div>
         <div className="flex items-center space-x-4">
           <label className="text-sm font-medium w-28">Break Length</label>
@@ -272,7 +291,9 @@ const Timer: React.FC = () => {
             onChange={(e) => setBreakDuration(Number(e.target.value))}
             className="accent-green-500 flex-1"
           />
-          <span className="w-8 text-right">{Math.floor(breakDuration / 60)}m</span>
+          <span className="w-8 text-right">
+            {Math.floor(breakDuration / 60)}m
+          </span>
         </div>
         <div className="flex items-center space-x-4">
           <label className="text-sm font-medium w-28">Focus Music</label>
@@ -298,6 +319,20 @@ const Timer: React.FC = () => {
             {BREAK_MUSIC_LIST.map((m) => (
               <option key={m.src} value={m.src}>
                 {m.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center space-x-4">
+          <label className="text-sm font-medium w-28">Background</label>
+          <select
+            value={background}
+            onChange={(e) => setBackground(e.target.value)}
+            className="flex-1 p-1 rounded border border-purple-200"
+          >
+            {BACKGROUND_LIST.map((b) => (
+              <option key={b.src || b.name} value={b.src}>
+                {b.name}
               </option>
             ))}
           </select>

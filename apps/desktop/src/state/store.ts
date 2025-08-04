@@ -8,6 +8,7 @@ interface TimerState {
   running: boolean;
   focusMusic: string;
   breakMusic: string;
+  background: string;
   totalFocusSeconds: number;
   cyclesCompleted: number;
   loading: boolean;
@@ -24,6 +25,7 @@ interface TimerState {
   setBreakDuration: (sec: number) => void;
   setFocusMusic: (src: string) => void;
   setBreakMusic: (src: string) => void;
+  setBackground: (src: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   incrementCycles: () => void;
@@ -38,6 +40,7 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   running: false,
   focusMusic: '',
   breakMusic: '',
+  background: '',
   totalFocusSeconds: 0,
   cyclesCompleted: 0,
   loading: false,
@@ -62,6 +65,7 @@ export const useTimerStore = create<TimerState>((set, get) => ({
   setBreakDuration: (sec) => set({ breakDuration: sec }),
   setFocusMusic: (src) => set({ focusMusic: src }),
   setBreakMusic: (src) => set({ breakMusic: src }),
+  setBackground: (src) => set({ background: src }),
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
   incrementCycles: () => set((state) => ({ cyclesCompleted: state.cyclesCompleted + 1 })),
