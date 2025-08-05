@@ -65,8 +65,8 @@ def webcam_worker(detector: EyePresenceDetector):
         eyes_on_screen = detector.detect_eyes_or_tilted_face(frame)
         status['eyes_on_screen'] = eyes_on_screen
         # (Optionally display/annotate if you want; can remove imshow)
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
+        # if cv2.waitKey(1) & 0xFF == ord("q"):
+        #     break
     cap.release()
     cv2.destroyAllWindows()
 

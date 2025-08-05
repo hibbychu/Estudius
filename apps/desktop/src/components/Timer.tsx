@@ -16,6 +16,7 @@ const BREAK_MUSIC_LIST = [{ name: "Silent", src: "" }];
 export const BACKGROUND_LIST = [
   { name: "Default", src: "" },
   { name: "Lofi Girl Video", type: "video", src: "/backgrounds/Lofi Girl.mp4" },
+  { name: "Custom URL", src: "__custom__" },
 ];
 
 type Mode = "focus" | "break";
@@ -175,6 +176,8 @@ const Timer: React.FC = () => {
   const seconds = String(secondsLeft % 60).padStart(2, "0");
   const maxTime = mode === "focus" ? focusDuration : breakDuration;
 
+  const [customBackgroundURL, setCustomBackgroundURL] = useState("");
+
   // --- UI ---
   return (
     <div className="flex flex-col max-w-md mx-auto my-2 border border-gray-100 bg-white rounded-xl shadow p-8 space-y-6">
@@ -325,17 +328,40 @@ const Timer: React.FC = () => {
         </div>
         <div className="flex items-center space-x-4">
           <label className="text-sm font-medium w-28">Background</label>
-          <select
-            value={background}
-            onChange={(e) => setBackground(e.target.value)}
-            className="flex-1 p-1 rounded border border-purple-200"
-          >
-            {BACKGROUND_LIST.map((b) => (
-              <option key={b.src || b.name} value={b.src}>
-                {b.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex-1">
+            <select
+              value={background}
+              onChange={(e) => {
+                const value = e.target.value;
+                setBackground(value);
+                if (value !== "__custom__") setCustomBackgroundURL(""); // Clear if not custom
+              }}
+              className="w-full p-1 rounded border border-purple-200"
+            >
+              {BACKGROUND_LIST.map((b) => (
+                <option key={b.src || b.name} value={b.src}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+
+            {background === "__custom__" && (
+              <input
+                type="text"
+                placeholder="Paste image/video URL"
+                className="mt-2 w-full border rounded p-1"
+                value={customBackgroundURL}
+                onChange={(e) => {
+                  const url = e.target.value;
+                  setCustomBackgroundURL(url);
+                }}
+                onBlur={() => {
+                  if (customBackgroundURL.trim())
+                    setBackground(customBackgroundURL);
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
 

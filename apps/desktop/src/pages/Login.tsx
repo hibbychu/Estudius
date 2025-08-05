@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return (
-    <main className="p-8 max-w-md mx-auto bg-white rounded-lg shadow-md">
+    <main className="p-8 w-[448px] mx-auto bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
         Login
       </h1>
