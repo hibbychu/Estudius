@@ -54,7 +54,7 @@ function App() {
               { to: "/", label: "Home" },
               { to: "/insights", label: "Insights" },
               { to: "/settings", label: "Settings" },
-              { to: "/onboarding", label: "Onboarding" },
+              { to: "/login", label: "Login" },
             ].map(({ to, label }) => (
               <NavLink
                 key={to}
@@ -85,10 +85,10 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/onboarding/signup" element={<SignUp />} />
-              <Route path="/onboarding/login" element={<Login />} />
+              <Route path="/Settings" element={<Settings />} />
+              <Route path="/Onboarding" element={<Onboarding />} />
+              <Route path="/SignUp" element={<SignUp />} />
+              <Route path="/Login" element={<Login />} />
             </Routes>
           </main>
 

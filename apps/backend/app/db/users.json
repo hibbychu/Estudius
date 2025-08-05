@@ -6,5 +6,21 @@
     {
         "email": "456@456",
         "hashed_password": "$2b$12$R2ZCEF0NcThLypfg38njuutfgaYw0tMCXo1xhgqpsVWnw/ApFDuC."
+    },
+    {
+        "email": "fat@fat",
+        "hashed_password": "$2b$12$LUOLKOeF/Jxt15YYIIlHUesr4gsIPP0clcytNmc1yDcOZ6CyzpvPu"
+    },
+    {
+        "email": "eee@eee",
+        "hashed_password": "$2b$12$.wk2eoU/lNGGgZ9BbFt0L.m9p8kFcCRwPMTZJT0XgZAIw0rHCEJlq"
+    },
+    {
+        "email": "annnn@123",
+        "hashed_password": "$2b$12$QrGA48S5My56HxHsgeDM9.pPwKmwp6N1JNjHgXuFlMNYCY5SNCIdG"
+    },
+    {
+        "email": "hibby@hibby.com",
+        "hashed_password": "$2b$12$zEK9oGvgAZfzvObVoyeHbemftO1mAjYePpw3ueja57OUFw6DNJcPS"
     }
 ]

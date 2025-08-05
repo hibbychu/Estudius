@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveToken } from '../utils/auth';
+import { Link } from "react-router-dom";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ export default function SignUp() {
         </button>
       </form>
       <p className="mt-4 text-center text-gray-500 text-sm">
-        Already have an account? <a href="/onboarding/login" className="text-blue-600 hover:underline">Log in</a>
+        Already have an account? <Link to="/Login" className="text-blue-600 hover:underline">Log in</Link>
       </p>
     </main>
   );

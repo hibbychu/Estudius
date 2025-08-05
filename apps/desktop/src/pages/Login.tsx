@@ -1,5 +1,6 @@
 import React, { use, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch("http://localhost:8005/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -76,9 +77,9 @@ export default function Login() {
 
       <p className="mt-4 text-center text-gray-500 text-sm">
         Don't have an account?{" "}
-        <a href="/onboarding/signup" className="text-blue-600 hover:underline">
+        <Link to="/SignUp" className="text-blue-600 hover:underline">
           Sign Up
-        </a>
+        </Link>
       </p>
     </main>
   );
