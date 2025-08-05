@@ -22,5 +22,9 @@
     {
         "email": "hibby@hibby.com",
         "hashed_password": "$2b$12$zEK9oGvgAZfzvObVoyeHbemftO1mAjYePpw3ueja57OUFw6DNJcPS"
+    },
+    {
+        "email": "222@222",
+        "hashed_password": "$2b$12$4G1HXmMJDaZNJgUrACv/EeIH389CHxeihS83B5gbrcSsmvFNktNeG"
     }
 ]

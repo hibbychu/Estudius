@@ -6,9 +6,11 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // clear previous error
 
     try {
       const res = await fetch("http://localhost:8005/login", {
@@ -17,22 +19,28 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        alert(errorData.detail || "Login failed");
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setError("Server sent invalid response.");
         return;
       }
 
-      const data = await res.json();
-      // data = { access_token: "...", token_type: "bearer" }
+      if (!res.ok) {
+        setError(data.detail || "Login failed");
+        return;
+      }
 
-      // Save token to localStorage or state management
+      if (!data.access_token) {
+        setError("No token received.");
+        return;
+      }
+
       localStorage.setItem("token", data.access_token);
-
-      // Navigate to protected/home page
       navigate("/");
     } catch (error) {
-      alert("Network error");
+      setError("Network error");
     }
   };
 
@@ -74,6 +82,11 @@ export default function Login() {
           Continue
         </button>
       </form>
+
+      {/* 🧩 Error message here */}
+      {error && (
+        <p className="mt-4 text-red-600 text-sm text-center">{error}</p>
+      )}
 
       <p className="mt-4 text-center text-gray-500 text-sm">
         Don't have an account?{" "}
