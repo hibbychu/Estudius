@@ -1,6 +1,8 @@
-from fastapi import APIRouter
+from datetime import datetime, timedelta
+from fastapi import APIRouter, Query
 import json
 from pathlib import Path
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -20,128 +22,67 @@ def load_sessions():
     except json.JSONDecodeError as e:
         print(f"ERROR: Invalid JSON format in {DATA_FILE.name}: {e}")
         return []
+    
+class RangeRequest(BaseModel):
+    range: str  # expects "day", "week", "month", or "year"
+
+# ---------- Streak Calculation ----------
+def calculate_streak(data: list) -> int:
+    if not data:
+        return 0
+
+    # Sort dates in descending order (most recent first)
+    sorted_dates = sorted(
+        [datetime.strptime(day["date"], "%Y-%m-%d") for day in data],
+        reverse=True,
+    )
+
+    streak = 0
+    current_date = datetime.now().date()
+
+    for date in sorted_dates:
+        date_only = date.date()
+
+        # If today, count it as part of streak
+        if date_only == current_date:
+            streak += 1
+            current_date -= timedelta(days=1)
+        # If it's exactly the previous day, continue streak
+        elif date_only == current_date - timedelta(days=1):
+            streak += 1
+            current_date -= timedelta(days=1)
+        else:
+            break  # streak broken if there's a gap
+
+    return streak
 
 # ---------- API Endpoint ----------
-@router.get("/summary")
-def get_insights_summary():
+@router.post("/summary")
+def get_insights_summary(request: RangeRequest):
     data = load_sessions()
+    today = datetime.now()
 
-    if not isinstance(data, list):
-        return {"error": "Invalid data format: Expected a list of sessions"}
+    if request.range == "day":
+        cutoff_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
+    elif request.range == "week":
+        cutoff_date = today - timedelta(weeks=1)
+    elif request.range == "month":
+        cutoff_date = today - timedelta(days=30)
+    elif request.range == "year":
+        cutoff_date = today - timedelta(days=365)
 
-    # Sum totalFocusTimeMin from each day entry
-    total_focus = sum(day.get("totalFocusTimeMin", 0) for day in data)
-    total_sessions = sum(day.get("totalSessions", 0) for day in data)
+    filtered_data = [
+        day for day in data 
+        if datetime.strptime(day["date"], "%Y-%m-%d") >= cutoff_date
+    ]
+
+    streak = calculate_streak(data)
 
     return {
-        "range": "week",
-        "totalFocusTimeMin": total_focus,
-        "totalSessions": total_sessions,
+        "range": request.range,
+        "totalFocusTimeMin": sum(d.get("totalFocusTimeMin", 0) for d in filtered_data),
+        "totalSessions": sum(d.get("totalSessions", 0) for d in filtered_data),
         "bestHour": "10 AM",
-        "trend": data
+        "streak": streak,
+        "trend": filtered_data
     }
-
-
-
-# from fastapi import APIRouter, Query
-# from fastapi.middleware.cors import CORSMiddleware
-# import json
-# from pathlib import Path
-# from datetime import datetime, timedelta
-# from collections import defaultdict
-
-# router = APIRouter()
-
-# DATA_FILE = Path(__file__).parent.parent / "data" / "test_sessions.json"
-
-# # ---------- Helper Functions ----------
-# # def load_sessions():
-# #     with open(DATA_FILE, "r") as f:
-# #         return json.load(f)
-
-# def load_sessions():
-#     print(f"📂 Attempting to load data from: {DATA_FILE.resolve()}")
-#     try:
-#         with open(DATA_FILE, "r") as f:
-#             data = json.load(f)
-#             print(f"✅ Successfully loaded {len(data)} records from {DATA_FILE.name}")
-#             return data
-#     except FileNotFoundError:
-#         print(f"❌ ERROR: File not found at {DATA_FILE.resolve()}")
-#         return []
-#     except json.JSONDecodeError as e:
-#         print(f"❌ ERROR: Invalid JSON format in {DATA_FILE.name}: {e}")
-#         return []
-
-# def filter_by_range(data, range_type: str):
-#     """Filter sessions based on selected range (day/week/month/year)."""
-#     now = datetime.now()
-#     if range_type == "day":
-#         cutoff = now.replace(hour=0, minute=0, second=0, microsecond=0)
-#     elif range_type == "week":
-#         cutoff = now - timedelta(days=7)
-#     elif range_type == "month":
-#         cutoff = now - timedelta(days=30)
-#     elif range_type == "year":
-#         cutoff = now - timedelta(days=365)
-#     else:
-#         cutoff = datetime.min
-
-#     filtered = [
-#         d for d in data 
-#         if datetime.strptime(d["date"], "%Y-%m-%d") >= cutoff
-#     ]
-#     return filtered
-
-# def find_most_productive_hour(filtered_data):
-#     """Find the hour of day with the most total focus time."""
-#     hour_focus = defaultdict(int)  # hour -> total minutes
-#     for day in filtered_data:
-#         for session in day["sessions"]:
-#             start = datetime.fromisoformat(session["start"])
-#             hour_focus[start.hour] += session["totalFocusTimeMin"]
-
-#     if not hour_focus:
-#         return None
-
-#     best_hour = max(hour_focus, key=hour_focus.get)
-#     return f"{best_hour}:00 - {best_hour+1}:00"
-
-# def build_trend_data(filtered_data):
-#     """Build chart data: total focus time per day."""
-#     trend = []
-#     for day in filtered_data:
-#         trend.append({
-#             "date": day["date"],
-#             "focusMinutes": day["totalFocusTimeMin"],
-#             "sessions": day["totalSessions"]
-#         })
-#     return trend
-
-# # ---------- API Endpoints ----------
-
-# @router.get("/summary")
-# def get_insights_summary(range: str = Query("week", enum=["day", "week", "month", "year"])):
-#     data = load_sessions()
-
-#     print(f"🔍 Loaded sessions data: {data}")
-#     filtered = filter_by_range(data, range)
-
-#     total_focus = sum(d["totalFocusTimeMin"] for d in filtered)
-#     total_sessions = sum(d["totalSessions"] for d in filtered)
-#     best_hour = find_most_productive_hour(filtered)
-#     trend_data = build_trend_data(filtered)
-
-#     response_data = {
-#         "range": range,
-#         "totalFocusTimeMin": total_focus,
-#         "totalSessions": total_sessions,
-#         "bestHour": best_hour,
-#         "trend": trend_data
-#     }
-
-#     print("Sending response data:", response_data)
-#     return response_data
-
-
-

@@ -6,7 +6,7 @@ from jose import jwt
 from datetime import datetime, timedelta
 import json
 import os
-from app.api import insights_routes 
+from app.api import insights_routes, task_routes
 
 app = FastAPI()
 
@@ -75,3 +75,4 @@ async def login(user: UserIn):
     return {"access_token": token, "token_type": "bearer"}
 
 app.include_router(insights_routes.router, prefix="/insights", tags=["Insights"])
+app.include_router(task_routes.router, prefix="/tasks", tags=["Tasks"])

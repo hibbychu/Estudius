@@ -16,11 +16,20 @@ interface TrendData {
 }
 
 interface InsightsData {
+  streak: string;
   range: string;
   totalFocusTimeMin: number;
   totalSessions: number;
   bestHour: string | null;
   trend: TrendData[];
+}
+interface Task {
+  id: string;
+  text: string;
+  completed: boolean;
+  createdAt: string;
+  completedAt?: string | null;
+  updatedAt: string;
 }
 
 export default function Insights() {
@@ -54,20 +63,41 @@ export default function Insights() {
 
   const { start, end } = getDateRange(selectedRange);
 
+  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [completedTasksCount, setCompletedTasksCount] = useState(0);
+
   useEffect(() => {
-    fetch("http://localhost:8005/insights/summary") //
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Raw data from API:", data);
-        setInsights(data);
-      })
-      .catch((err) => console.error("Fetch error:", err));
-  }, []);
+  // Fetch tasks
+  fetch("http://localhost:8005/tasks")
+    .then((res) => res.json())
+    .then((data: Task[]) => {
+      setTaskList(data);
+
+      // Calculate completed tasks within selected range
+      const completedInRange = data.filter(
+        (task) =>
+          task.completed &&
+          task.completedAt &&
+          new Date(task.completedAt) >= start &&
+          new Date(task.completedAt) <= end
+      ).length;
+
+      setCompletedTasksCount(completedInRange);
+    })
+    .catch(console.error);
+}, [selectedRange]);
+
+  useEffect(() => {
+    fetch("http://localhost:8005/insights/summary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ range: selectedRange }), // sending range in request body
+    })
+      .then((res) => res.json())
+      .then((data) => setInsights(data));
+  }, [selectedRange]);
 
   if (!insights) return <p>Loading insights...</p>;
 
@@ -115,7 +145,7 @@ export default function Insights() {
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Streak
           </h2>
-          <p className="text-3xl font-bold text-green-500">28</p>
+          <p className="text-3xl font-bold text-green-500">{insights.streak}</p>
           {/* <p className="text-sm text-gray-500 dark:text-gray-400">
             {start.toLocaleDateString()} – {end.toLocaleDateString()}
           </p> */}
@@ -126,7 +156,7 @@ export default function Insights() {
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Tasks Completed
           </h2>
-          <p className="text-3xl font-bold text-blue-600">28</p>
+          <p className="text-3xl font-bold text-blue-600">{completedTasksCount}</p>
           {/* <p className="text-sm text-gray-500 dark:text-gray-400">
             {start.toLocaleDateString()} – {end.toLocaleDateString()}
           </p> */}
