@@ -30,5 +30,9 @@
     {
         "email": "a@gmail.com",
         "hashed_password": "$2b$12$ICqK63B9Xciey1gVmIjYeO1IO3cXCZaXP4wzZVPzkqgVg3u1hiC5a"
+    },
+    {
+        "email": "qwewqe22@2123213",
+        "hashed_password": "$2b$12$VZN5Spna04DKK8aUSNGRreFYCaX11pya/7iGbrWMFR3YfHTVdj7F2"
     }
 ]

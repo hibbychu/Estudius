@@ -58,3 +58,4 @@ if __name__ == "__main__":
     start_activity_monitor()
     # Optional: block forever so script doesn't exit
     threading.Event().wait()
+    
