@@ -7,8 +7,6 @@ from jose import jwt
 from datetime import datetime, timedelta
 import json
 import os
-from app.api import insights_routes, task_routes
-from app.activity_tracker import activity_status, start_activity_monitor
 
 app = FastAPI()
 app.add_middleware(
@@ -86,6 +84,3 @@ async def login(user: UserIn):
     token = jwt.encode(token_payload, SECRET_KEY, ALGORITHM)
 
     return {"access_token": token, "token_type": "bearer"}
-
-app.include_router(insights_routes.router, prefix="/insights", tags=["Insights"])
-app.include_router(task_routes.router, prefix="/tasks", tags=["Tasks"])
