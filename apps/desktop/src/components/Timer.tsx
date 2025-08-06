@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTimerStore } from "../state/store";
 import { useEyeDetectorStatus } from "../hooks/useEyeDetectorStatus";
+import { useActivityStatus } from "../hooks/useActivityStatus";
 
 // Music lists
 const MUSIC_LIST = [
@@ -23,12 +24,15 @@ export const BACKGROUND_LIST = [
 type Mode = "focus" | "break";
 
 const Timer: React.FC = () => {
-  // Optional: Allow user to enable/disable the feature
+  // Eyes detection toggle
   const [requireEyesToFocus, setRequireEyesToFocus] = useState<boolean>(true);
+  // Keyboard & mouse activity tracking toggle
+  const [trackingEnabled, setTrackingEnabled] = useState<boolean>(false);
+  const [trackingStatus, setTrackingStatus] = useState<string>("Unknown");
 
-  // Replace this with your real "eyes detected" bridge
+  // Eye detection status
   const eyesOnScreen = useEyeDetectorStatus();
-
+  const activityStatus = useActivityStatus();
   // Zustand timer state/actions:
   const {
     focusDuration,
@@ -67,7 +71,6 @@ const Timer: React.FC = () => {
 
   // --- TIMER TICK EFFECT gated by eye detection ---
   useEffect(() => {
-    // Core: only tick if EITHER (feature is off) OR (feature on + eyes detected)
     if (!running || secondsLeft === 0) return;
     if (requireEyesToFocus && !eyesOnScreen && mode === "focus") return;
 
@@ -179,7 +182,27 @@ const Timer: React.FC = () => {
 
   const [customBackgroundURL, setCustomBackgroundURL] = useState("");
 
-  // --- UI ---
+  // --- Toggle activity tracking and notify backend ---
+  const handleToggleActivityTracking = async () => {
+    const newValue = !trackingEnabled;
+    setTrackingEnabled(newValue);
+    try {
+      const response = await fetch(
+        `http://localhost:8001/activity_monitor`,
+        {
+          method: newValue ? "POST" : "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to ${newValue ? "start" : "stop"} activity monitor`);
+      }
+      setTrackingStatus(newValue ? "Tracking enabled" : "Tracking disabled");
+    } catch (error: any) {
+      setTrackingStatus(`Error: ${error.message || error}`);
+      setTrackingEnabled(!newValue); // revert toggle on failure
+    }
+  };
+
   return (
     <div className="flex flex-col max-w-md mx-auto my-2 border border-gray-100 bg-white rounded-xl shadow p-8 space-y-6">
       {loading && <p className="text-blue-500 font-semibold">Loading...</p>}
@@ -211,6 +234,23 @@ const Timer: React.FC = () => {
         <div className="bg-yellow-100 text-yellow-800 rounded px-2 py-1 mb-2 font-semibold">
           Timer paused: Eyes not detected!
         </div>
+      )}
+
+      {/* Activity Tracking Toggle */}
+      <div className="flex flex-col space-y-1 mb-4 p-2 border rounded bg-gray-50">
+        <h3 className="text-sm font-semibold">Activity Monitor Status:</h3>
+        {activityStatus ? (
+          <>
+            <p>Keystrokes (last 10s window): {activityStatus.last_keystroke_count}</p>
+            <p>Mouse Distance (px): {activityStatus.last_mouse_distance.toFixed(2)}</p>
+            <p className="italic text-gray-700">{activityStatus.last_log}</p>
+          </>
+        ) : (
+          <p>Loading activity data...</p>
+        )}
+      </div>
+      {trackingEnabled && (
+        <div className="text-green-600 mb-4 font-medium">{trackingStatus}</div>
       )}
 
       {/* Timer Info and Cycles */}
@@ -280,9 +320,7 @@ const Timer: React.FC = () => {
             onChange={(e) => setFocusDuration(Number(e.target.value))}
             className="accent-blue-500 flex-1"
           />
-          <span className="w-8 text-right">
-            {Math.floor(focusDuration / 60)}m
-          </span>
+          <span className="w-8 text-right">{Math.floor(focusDuration / 60)}m</span>
         </div>
         <div className="flex items-center space-x-4">
           <label className="text-sm font-medium w-28">Break Length</label>
@@ -295,9 +333,7 @@ const Timer: React.FC = () => {
             onChange={(e) => setBreakDuration(Number(e.target.value))}
             className="accent-green-500 flex-1"
           />
-          <span className="w-8 text-right">
-            {Math.floor(breakDuration / 60)}m
-          </span>
+          <span className="w-8 text-right">{Math.floor(breakDuration / 60)}m</span>
         </div>
         <div className="flex items-center space-x-4">
           <label className="text-sm font-medium w-28">Focus Music</label>
@@ -357,8 +393,7 @@ const Timer: React.FC = () => {
                   setCustomBackgroundURL(url);
                 }}
                 onBlur={() => {
-                  if (customBackgroundURL.trim())
-                    setBackground(customBackgroundURL);
+                  if (customBackgroundURL.trim()) setBackground(customBackgroundURL);
                 }}
               />
             )}

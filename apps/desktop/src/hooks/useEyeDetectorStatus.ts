@@ -7,7 +7,7 @@ export function useEyeDetectorStatus(pollMs = 1000) {
   useEffect(() => {
     let alive = true;
     async function poll() {
-      console.log("Polling /eyes...")
+      console.log("Polling /eyes...polling...")
       try {
         const resp = await fetch('http://localhost:8001/eyes');
         const json = await resp.json();

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from passlib.hash import bcrypt
 from jose import jwt
@@ -7,9 +8,9 @@ from datetime import datetime, timedelta
 import json
 import os
 from app.api import insights_routes, task_routes
+from app.activity_tracker import activity_status, start_activity_monitor
 
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # Frontend URL
@@ -17,6 +18,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+start_activity_monitor()  # <-- starts keyboard & mouse tracking
+
+@app.get("/activity_monitor/status")
+def get_activity_status():
+    return JSONResponse({
+        "keystroke_count": activity_status['keystroke_count'],
+        "last_keystroke_count": activity_status['last_keystroke_count'],
+        "last_mouse_distance": activity_status['last_mouse_distance'],
+        "mouse_distance": activity_status['mouse_distance'],
+        "last_log": activity_status['last_log']
+    })
 
 USERS_FILE = "app/db/users.json"
 
