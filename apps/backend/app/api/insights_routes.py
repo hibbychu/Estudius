@@ -8,25 +8,38 @@ DATA_FILE = Path(__file__).parent.parent / "data" / "test_sessions.json"
 
 # ---------- Helper Function ----------
 def load_sessions():
-    print(f"📂 Attempting to load data from: {DATA_FILE.resolve()}")
+    print(f"Attempting to load data from: {DATA_FILE.resolve()}")
     try:
         with open(DATA_FILE, "r") as f:
             data = json.load(f)
-            print(f"✅ Successfully loaded {len(data)} records from {DATA_FILE.name}")
+            print(f"Successfully loaded {len(data)} records from {DATA_FILE.name}")
             return data
     except FileNotFoundError:
-        print(f"❌ ERROR: File not found at {DATA_FILE.resolve()}")
+        print(f"ERROR: File not found at {DATA_FILE.resolve()}")
         return []
     except json.JSONDecodeError as e:
-        print(f"❌ ERROR: Invalid JSON format in {DATA_FILE.name}: {e}")
+        print(f"ERROR: Invalid JSON format in {DATA_FILE.name}: {e}")
         return []
 
 # ---------- API Endpoint ----------
 @router.get("/summary")
 def get_insights_summary():
     data = load_sessions()
-    print("📤 Sending raw JSON data to frontend...")
-    return {"data": data}
+
+    if not isinstance(data, list):
+        return {"error": "Invalid data format: Expected a list of sessions"}
+
+    # Sum totalFocusTimeMin from each day entry
+    total_focus = sum(day.get("totalFocusTimeMin", 0) for day in data)
+    total_sessions = sum(day.get("totalSessions", 0) for day in data)
+
+    return {
+        "range": "week",
+        "totalFocusTimeMin": total_focus,
+        "totalSessions": total_sessions,
+        "bestHour": "10 AM",
+        "trend": data
+    }
 
 
 

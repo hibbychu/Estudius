@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
   if (!token) {
     // Not authenticated — redirect to login
-    return <Navigate to="/onboarding/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   // Authenticated — render children components

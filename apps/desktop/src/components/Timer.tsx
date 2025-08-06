@@ -15,7 +15,8 @@ const BREAK_MUSIC_LIST = [{ name: "Silent", src: "" }];
 
 export const BACKGROUND_LIST = [
   { name: "Default", src: "" },
-  { name: "Lofi Girl Video", type: "video", src: "/backgrounds/Lofi Girl.mp4" },
+  { name: "Anime Girl Video", type: "video", src: "/backgrounds/Anime Girl.mp4" },
+  { name: "Cafe Video", type: "video", src: "/backgrounds/Cafe.mp4" },
   { name: "Custom URL", src: "__custom__" },
 ];
 

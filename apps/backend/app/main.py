@@ -6,12 +6,13 @@ from jose import jwt
 from datetime import datetime, timedelta
 import json
 import os
+from app.api import insights_routes 
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5137"],
+    allow_origins=["http://localhost:5173"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -72,3 +73,5 @@ async def login(user: UserIn):
     token = jwt.encode(token_payload, SECRET_KEY, ALGORITHM)
 
     return {"access_token": token, "token_type": "bearer"}
+
+app.include_router(insights_routes.router, prefix="/insights", tags=["Insights"])
