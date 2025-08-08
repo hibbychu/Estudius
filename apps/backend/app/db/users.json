@@ -34,5 +34,13 @@
     {
         "email": "qwewqe22@2123213",
         "hashed_password": "$2b$12$VZN5Spna04DKK8aUSNGRreFYCaX11pya/7iGbrWMFR3YfHTVdj7F2"
+    },
+    {
+        "email": "poli@ss",
+        "hashed_password": "$2b$12$3V4bUwGAlh/S92sIMrEVTuvXUXisa.B2MyqbqV5JOKdUXi8QnzPi2"
+    },
+    {
+        "email": "hibby@hibby",
+        "hashed_password": "$2b$12$StYk.VUGziT/HvGjJ65wMuWkfAUn5fXPL8KTYR6.BPrq.wN8iMiLG"
     }
 ]

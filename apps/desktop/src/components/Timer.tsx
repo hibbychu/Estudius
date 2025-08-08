@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTimerStore } from "../state/store";
 import { useEyeDetectorStatus } from "../hooks/useEyeDetectorStatus";
 import { useActivityStatus } from "../hooks/useActivityStatus";
+import { useFlowDetection } from "../hooks/useFlowDetection";
 
 // Music lists
 const MUSIC_LIST = [
@@ -68,6 +69,8 @@ const Timer: React.FC = () => {
   const musicAudioRef = useRef<HTMLAudioElement | null>(null);
   const prevModeRef = useRef<Mode>(mode);
   const prevRunningRef = useRef(running);
+
+  const { isInFlow } = useFlowDetection();
 
   // --- TIMER TICK EFFECT gated by eye detection ---
   useEffect(() => {
@@ -235,6 +238,10 @@ const Timer: React.FC = () => {
           Timer paused: Eyes not detected!
         </div>
       )}
+      
+      <div style={{ position: "fixed", bottom: 10, right: 10, background: "#eee", padding: "0.5rem", borderRadius: "8px", zIndex: 999 }}>
+        <strong>Flow State:</strong> {isInFlow ? "🟢 IN FLOW" : "⚪️ not in flow"}
+      </div>
 
       {/* Activity Tracking Toggle */}
       <div className="flex flex-col space-y-1 mb-4 p-2 border rounded bg-gray-50">

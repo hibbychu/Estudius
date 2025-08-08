@@ -1,7 +1,14 @@
+// apps/desktop/src/hooks/useActivityStatus.ts
 import { useEffect, useState } from "react";
 
 export function useActivityStatus(pollMs = 10000) {
-  const [activityData, setActivityData] = useState<{ last_mouse_distance: number; last_keystroke_count: number; keystroke_count: number; mouse_distance: number; last_log: string } | null>(null);
+  const [activityData, setActivityData] = useState<{
+    last_mouse_distance: number;
+    last_keystroke_count: number;
+    keystroke_count: number;
+    mouse_distance: number;
+    last_log: string;
+  } | null>(null);
 
   useEffect(() => {
     let alive = true;
