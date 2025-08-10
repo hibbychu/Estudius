@@ -3,6 +3,7 @@ import { useTimerStore } from "../state/store";
 import { useEyeDetectorStatus } from "../hooks/useEyeDetectorStatus";
 import { useActivityStatus } from "../hooks/useActivityStatus";
 import { useFlowDetection } from "../hooks/useFlowDetection";
+import { useFlowHistory } from '../hooks/useFlowHistory'; // or wherever you defined it
 
 // Music lists
 const MUSIC_LIST = [
@@ -71,6 +72,12 @@ const Timer: React.FC = () => {
   const prevRunningRef = useRef(running);
 
   const { isInFlow } = useFlowDetection();
+
+  // to console log the history of detections
+  const history = useFlowHistory(5000); // poll every 5 seconds
+  useEffect(() => {
+    console.log("Flow History:", history);
+  }, [history]);
 
   // --- TIMER TICK EFFECT gated by eye detection ---
   useEffect(() => {
