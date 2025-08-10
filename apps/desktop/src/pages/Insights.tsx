@@ -129,7 +129,7 @@ export default function Insights() {
       {/* Stats Grid */}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {/* Total Focus Time */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Total Focus Time
           </h2>
@@ -141,7 +141,7 @@ export default function Insights() {
         </div>
 
         {/* Pomodoro Streak */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Streak
           </h2>
@@ -152,7 +152,7 @@ export default function Insights() {
         </div>
 
         {/* Tasks Completed */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Tasks Completed
           </h2>
@@ -171,7 +171,7 @@ export default function Insights() {
         <p className="text-gray-600 dark:text-gray-400 mb-6">
           Track your productivity, trends, and discover your optimal work times.
         </p>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow h-64">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow h-64 hover:shadow-lg transition-shadow">
           {insights.trend && insights.trend.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={insights.trend}>
@@ -197,7 +197,7 @@ export default function Insights() {
 
       {/* AI-Adaptive Scheduler */}
       <section className="mt-12 grid gap-8 md:grid-cols-2">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             AI-Adaptive Scheduler
           </h2>
@@ -208,7 +208,7 @@ export default function Insights() {
         </div>
 
         {/* Mood & Energy Check-ins */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Mood & Energy Check-ins
           </h2>

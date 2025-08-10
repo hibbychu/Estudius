@@ -27,11 +27,13 @@ export default function Settings() {
     const root = window.document.documentElement;
     if (darkMode) {
       console.log('Enabling dark mode');
-      root.classList.add('dark');
+      // root.classList.add('dark');
+      document.documentElement.classList.add("dark");
       localStorage.setItem('theme', 'dark');
     } else {
       console.log('Disabling dark mode');
-      root.classList.remove('dark');
+      // root.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
       localStorage.setItem('theme', 'light');
     }
     console.log('Current class list on html:', root.classList.toString());
@@ -58,7 +60,7 @@ export default function Settings() {
             onChange={() => setDarkMode(!darkMode)}
             className="form-checkbox h-5 w-5 text-blue-600"
           />
-          <span className="text-gray-700 dark:text-gray-300 font-medium">Enable Dark Mode</span>
+          <span className="text-gray-700 dark:text-gray-300 font-medium">Dark Mode</span>
         </label>
         <div>
           <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
