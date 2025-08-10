@@ -15,9 +15,9 @@ interface AuthState {
   logout: () => void;
 }
 
-// Load initial state from localStorage
-const storedUser = localStorage.getItem("user");
-const storedToken = localStorage.getItem("token");
+// Load initial state from sessionStorage
+const storedUser = sessionStorage.getItem("user");
+const storedToken = sessionStorage.getItem("token");
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: !!storedToken,
@@ -31,8 +31,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   login: (user, token) => {
     const userWithAvatar = { ...user, avatar: user.avatar || defaultAvatar };
-    localStorage.setItem("user", JSON.stringify(userWithAvatar));
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("user", JSON.stringify(userWithAvatar));
+    sessionStorage.setItem("token", token);
 
     set({
       isLoggedIn: true,
@@ -42,8 +42,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
 
     set({
       isLoggedIn: false,
