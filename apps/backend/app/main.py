@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import json
 import os
 from app.activity_tracker import start_activity_monitor, activity_status
-from app.api import task_routes
+from app.api import task_routes,insights_routes
 
 app = FastAPI()
 app.add_middleware(
@@ -88,3 +88,4 @@ async def login(user: UserIn):
     return {"access_token": token, "token_type": "bearer"}
 
 app.include_router(task_routes.router, prefix="/tasks", tags=["Tasks"])
+app.include_router(insights_routes.router, prefix="/insights", tags=["Insights"])
