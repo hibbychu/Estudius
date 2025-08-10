@@ -1,11 +1,11 @@
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from passlib.hash import bcrypt
 from jose import jwt
 from datetime import datetime, timedelta
+from typing import List, Dict
 import json
 import os
 from app.activity_tracker import start_activity_monitor, activity_status
@@ -16,39 +16,53 @@ app = FastAPI()
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Frontend URL
+    allow_origins=["http://localhost:5173", "http://192.168.1.52:5173"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-connected_users = {}
+connected_users: Dict[WebSocket, Dict[str, str]] = {}
 
 # WebSocket endpoint
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
-        # First message from client = user name
-        name = await websocket.receive_text()
-        connected_users[name] = websocket
-        await broadcast_online_users()
+        data = await websocket.receive_text()
+        user_info = json.loads(data)
+        name = user_info.get("name", "Anonymous")
+        avatar = user_info.get("avatar", "/assets/icons/user.png")
+
+        connected_users[websocket] = { "name": name, "avatar": avatar }
+
+        await notify_users()  # Notify everyone about new user
 
         while True:
-            _ = await websocket.receive_text()  # You can later process ping/exit commands
-
+            await websocket.receive_text()  # Keep connection alive
     except WebSocketDisconnect:
-        if name in connected_users:
-            del connected_users[name]
-        await broadcast_online_users()
+        print(f"Disconnected: {connected_users.get(websocket, {}).get('name')}")
+    finally:
+        if websocket in connected_users:
+            del connected_users[websocket]
+        await notify_users()
+
+async def notify_users():
+    online_list = list(connected_users.values())
+    message = "ONLINE_USERS:" + json.dumps(online_list)
+    for connection in connected_users:
+        await connection.send_text(message)
 
 async def broadcast_online_users():
-    users = ",".join(connected_users.keys())
-    for user_ws in connected_users.values():
+    users = [
+        {"name": name, "avatar": data["avatar"]}
+        for name, data in connected_users.items()
+    ]
+    for user_data in connected_users.values():
         try:
-            await user_ws.send_text(f"ONLINE_USERS:{users}")
+            await user_data["ws"].send_text(f"ONLINE_USERS:{json.dumps(users)}")
         except:
-            pass  # Ignore broken connections
+            pass
 
 start_activity_monitor()  # <-- starts keyboard & mouse tracking
 
