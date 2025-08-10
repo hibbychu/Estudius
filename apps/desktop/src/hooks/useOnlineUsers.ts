@@ -15,8 +15,7 @@ export const useOnlineUsers = (user: OnlineUser | null) => {
     ws.onmessage = (event) => {
       const received = JSON.parse(event.data);
       if (Array.isArray(received)) {
-        const filtered = received.filter((u: OnlineUser) => u.name !== user?.name);
-        setUsers(filtered);
+        setUsers(received);
       }
     };
 

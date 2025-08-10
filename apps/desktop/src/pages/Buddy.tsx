@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
+import { useAuthStore } from "../state/authStore"; // import your auth store
 import { useOnlineUsers } from "../hooks/useOnlineUsers";
 
-type OnlineUser = {
-  name: string;
-  avatar: string;
-};
-
 export default function Buddy() {
-  const [user, setUser] = useState<OnlineUser>({
-    name: "User" + Math.floor(Math.random() * 1000),
-    avatar: "/assets/icons/user.png",
-  });
+  // get the logged-in user from Zustand global store
+  const user = useAuthStore((state) => state.user);
 
+  // pass user to your online users hook
   const onlineUsers = useOnlineUsers(user);
+
+  // if no user logged in, show a message or fallback UI
+  if (!user) {
+    return (
+      <div className="max-w-xl mx-auto p-6 text-center">
+        <p className="text-red-500">Please log in to see online users.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4 text-center">People Online (Same Network)</h1>
       <ul className="bg-white shadow rounded-lg p-4 space-y-2">
-        {onlineUsers.map((u, index) => (
-          <li key={index} className="flex items-center gap-3 p-2 border-b last:border-b-0">
+        {onlineUsers.map((u) => (
+          <li key={u.name} className="flex items-center gap-3 p-2 border-b last:border-b-0">
             <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full" />
             <span>{u.name}</span>
           </li>
