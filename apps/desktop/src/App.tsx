@@ -6,6 +6,7 @@ import "./styles/globals.css";
 import Home from "./pages/Home";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
+import Buddy from "./pages/Buddy";
 import Onboarding from "./pages/Onboarding";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -65,6 +66,7 @@ function App() {
                   {[
                     { to: "/", label: "Home" },
                     { to: "/insights", label: "Insights" },
+                    { to: "/buddy", label: "Buddy" },
                   ].map(({ to, label }) => (
                     <NavLink
                       key={to}
@@ -119,6 +121,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Insights />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/buddy"
+                element={
+                  <PrivateRoute>
+                    <Buddy />
                   </PrivateRoute>
                 }
               />

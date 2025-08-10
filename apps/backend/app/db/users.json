@@ -42,5 +42,9 @@
     {
         "email": "hibby@hibby",
         "hashed_password": "$2b$12$StYk.VUGziT/HvGjJ65wMuWkfAUn5fXPL8KTYR6.BPrq.wN8iMiLG"
+    },
+    {
+        "email": "hebetian@hebetian",
+        "hashed_password": "$2b$12$yYP/1xLGq6rd46lW/MM6teinVXEGWWMPKDKT0nAEc1UEOaidM9YD6"
     }
 ]
