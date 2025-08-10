@@ -2,13 +2,12 @@ import socket
 import threading
 
 host = '0.0.0.0'
-port = 12345
+port = 8001
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((host, port))
 server_socket.listen()
 
 clients = {}  # name -> socket
-
 
 def broadcast_online_users():
     users = ",".join(clients.keys())

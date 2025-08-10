@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from passlib.hash import bcrypt
 from jose import jwt
@@ -11,6 +12,8 @@ from app.activity_tracker import start_activity_monitor, activity_status
 from app.api import task_routes,insights_routes
 
 app = FastAPI()
+
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # Frontend URL
@@ -18,6 +21,34 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+connected_users = {}
+
+# WebSocket endpoint
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        # First message from client = user name
+        name = await websocket.receive_text()
+        connected_users[name] = websocket
+        await broadcast_online_users()
+
+        while True:
+            _ = await websocket.receive_text()  # You can later process ping/exit commands
+
+    except WebSocketDisconnect:
+        if name in connected_users:
+            del connected_users[name]
+        await broadcast_online_users()
+
+async def broadcast_online_users():
+    users = ",".join(connected_users.keys())
+    for user_ws in connected_users.values():
+        try:
+            await user_ws.send_text(f"ONLINE_USERS:{users}")
+        except:
+            pass  # Ignore broken connections
 
 start_activity_monitor()  # <-- starts keyboard & mouse tracking
 

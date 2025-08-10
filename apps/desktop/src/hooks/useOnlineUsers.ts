@@ -1,27 +1,29 @@
 import { useEffect, useState } from "react";
 
-export function useOnlineUsers(username: string) {
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+type OnlineUser = { name: string; avatar: string };
+
+export const useOnlineUsers = (user: OnlineUser | null) => {
+  const [users, setUsers] = useState<OnlineUser[]>([]);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8001"); // optionally use websocket wrapper if you implement it
+    const ws = new WebSocket("ws://localhost:8002/ws");
 
-    socket.onopen = () => {
-      socket.send(username);
-    };
+    ws.onopen = () => console.log("WebSocket connected");
+    ws.onerror = (error) => console.error("WebSocket error:", error);
+    ws.onclose = (e) => console.log("WebSocket closed", e);
 
-    socket.onmessage = (event) => {
-      const data = event.data;
-      if (data.startsWith("ONLINE_USERS:")) {
-        const users = data.replace("ONLINE_USERS:", "").split(",");
-        setOnlineUsers(users);
+    ws.onmessage = (event) => {
+      const received = JSON.parse(event.data);
+      if (Array.isArray(received)) {
+        const filtered = received.filter((u: OnlineUser) => u.name !== user?.name);
+        setUsers(filtered);
       }
     };
 
     return () => {
-      socket.close();
+      ws.close();
     };
-  }, [username]);
+  }, [user]);
 
-  return onlineUsers;
-}
+  return users;
+};
