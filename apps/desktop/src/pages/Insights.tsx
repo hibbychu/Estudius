@@ -172,7 +172,7 @@ export default function Insights() {
           Track your productivity, trends, and discover your optimal work times.
         </p>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow h-64">
-          {insights.trend.length > 0 ? (
+          {insights.trend && insights.trend.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={insights.trend}>
                 <CartesianGrid strokeDasharray="3 3" />
