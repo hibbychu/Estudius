@@ -1,12 +1,15 @@
 import React, { use, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../state/authStore";
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const login = useAuthStore((state) => state.login);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +40,8 @@ export default function Login() {
         return;
       }
 
-      localStorage.setItem("token", data.access_token);
+      const user = data.user || { name: email, avatar: "/assets/icons/user.png" };
+      login(user, data.access_token);
       navigate("/");
     } catch (error) {
       setError("Network error");

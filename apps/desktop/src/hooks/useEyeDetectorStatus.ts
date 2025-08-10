@@ -7,11 +7,11 @@ export function useEyeDetectorStatus(pollMs = 1000) {
   useEffect(() => {
     let alive = true;
     async function poll() {
-      console.log("Polling /eyes...polling...")
+      // console.log("Polling /eyes...polling...")
       try {
         const resp = await fetch('http://localhost:8001/eyes');
         const json = await resp.json();
-        console.log("Eye status JSON:", json);  // <--- add this line
+        // console.log("Eye status JSON:", json);  // <--- add this line
         if (alive) setEyesOnScreen(!!json.eyes_on_screen);
       } catch {
         // Service down? Mark as "no detection"

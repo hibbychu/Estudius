@@ -1,19 +1,18 @@
 import React, { JSX } from "react";
 import { Navigate } from "react-router-dom";
+import { useAuthStore } from "../state/authStore";
 
 interface PrivateRouteProps {
   children: JSX.Element;
 }
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const token = localStorage.getItem("token");
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-  if (!token) {
-    // Not authenticated — redirect to login
+  if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
 
-  // Authenticated — render children components
   return children;
 };
 

@@ -76,7 +76,7 @@ const Timer: React.FC = () => {
   // to console log the history of detections
   const history = useFlowHistory(5000); // poll every 5 seconds
   useEffect(() => {
-    console.log("Flow History:", history);
+    // console.log("Flow History:", history);
   }, [history]);
 
   // --- TIMER TICK EFFECT gated by eye detection ---

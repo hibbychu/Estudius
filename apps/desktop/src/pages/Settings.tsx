@@ -46,15 +46,7 @@ export default function Settings() {
 
   return (
     <main className="p-8 max-w-3xl mx-auto space-y-8">
-      <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Settings</h1>
-
-      {/* Account Section */}
-      <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-4 space-x-4">
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Account</h2>
-        <button className="text-blue-600 hover:underline">Change Password</button>
-        <button className="text-blue-600 hover:underline">Update Email</button>
-        <button className="text-red-600 hover:underline">Delete Account</button>
-      </section>
+      <h1 className="text-4xl font-bold mb-4 text-gray-900">Settings</h1>
 
       {/* Preferences Section */}
       <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-4">
