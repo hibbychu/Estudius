@@ -29,17 +29,25 @@ connected_users: Dict[WebSocket, Dict[str, str]] = {}
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
-        data = await websocket.receive_text()
-        user_info = json.loads(data)
-        name = user_info.get("name", "Anonymous")
-        avatar = user_info.get("avatar", "/assets/icons/user.png")
-
-        connected_users[websocket] = { "name": name, "avatar": avatar }
-
-        await notify_users()  # Notify everyone about new user
-
         while True:
-            await websocket.receive_text()  # Keep connection alive
+            data = await websocket.receive_text()
+            message = json.loads(data)
+
+            if message.get("type") == "init":
+                name = message.get("name", "Anonymous")
+                avatar = message.get("avatar", "/assets/icons/user.png")
+                connected_users[websocket] = {
+                    "name": name,
+                    "avatar": avatar,
+                    "flow_data": {}
+                }
+                await notify_users()
+
+            elif message.get("type") == "update":
+                if websocket in connected_users:
+                    connected_users[websocket]["flow_data"] = message.get("flowData", {})
+                    await notify_users()
+
     except WebSocketDisconnect:
         print(f"Disconnected: {connected_users.get(websocket, {}).get('name')}")
     finally:
@@ -48,10 +56,21 @@ async def websocket_endpoint(websocket: WebSocket):
         await notify_users()
 
 async def notify_users():
-    online_list = list(connected_users.values())
+    online_list = [
+        {
+            "name": user["name"],
+            "avatar": user["avatar"],
+            "isInFlow": user["flow_data"].get("isInFlow"),
+            "eyesOnScreen": user["flow_data"].get("eyesOnScreen"),
+            "keystrokeCount": user["flow_data"].get("keystrokeCount"),
+            "mouseDistance": user["flow_data"].get("mouseDistance"),
+        }
+        for user in connected_users.values()
+    ]
     message = "ONLINE_USERS:" + json.dumps(online_list)
     for connection in connected_users:
         await connection.send_text(message)
+
 
 async def broadcast_online_users():
     users = [

@@ -38,6 +38,11 @@ export default function Buddy() {
               {u.name}
               {u.name === user.name && " (You)"}
             </span>
+            {u.isInFlow !== undefined && (
+              <div className="text-sm text-gray-500 ml-2">
+                {u.isInFlow ? "🧠 Flow" : "😴 Not in Flow"} | 👀 {u.eyesOnScreen ? "Looking" : "Away"} | ⌨️ {u.keystrokeCount} | 🖱️ {u.mouseDistance}
+              </div>
+            )}
           </li>
         ))}
       </ul>
