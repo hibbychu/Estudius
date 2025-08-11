@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useFlowHistory } from "../hooks/useFlowHistory";
+
 import {
   LineChart,
   Line,
@@ -38,54 +40,106 @@ export default function Insights() {
   >("week");
   const [insights, setInsights] = useState<InsightsData | null>(null);
 
-  const getDateRange = (range: "day" | "week" | "month" | "year") => {
+  const [start, setStart] = useState<Date>(new Date());
+  const [end, setEnd] = useState<Date>(new Date());
+
+  // Calculate start and end dates based on selectedRange
+  useEffect(() => {
     const now = new Date();
-    let start: Date;
+    let rangeStart = new Date();
+    let rangeEnd = new Date();
 
-    switch (range) {
-      case "day":
-        start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        break;
-      case "week": {
-        const firstDayOfWeek = now.getDate() - now.getDay(); // Sunday as first day
-        start = new Date(now.getFullYear(), now.getMonth(), firstDayOfWeek);
-        break;
-      }
-      case "month":
-        start = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case "year":
-        start = new Date(now.getFullYear(), 0, 1);
-        break;
+    if (selectedRange === "day") {
+      rangeStart.setHours(0, 0, 0, 0);
+      rangeEnd.setHours(23, 59, 59, 999);
+    } else if (selectedRange === "week") {
+      const firstDay = now.getDate() - now.getDay();
+      rangeStart = new Date(now.setDate(firstDay));
+      rangeStart.setHours(0, 0, 0, 0);
+      rangeEnd = new Date(rangeStart);
+      rangeEnd.setDate(rangeStart.getDate() + 6);
+      rangeEnd.setHours(23, 59, 59, 999);
+    } else if (selectedRange === "month") {
+      rangeStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      rangeEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      rangeEnd.setHours(23, 59, 59, 999);
+    } else if (selectedRange === "year") {
+      rangeStart = new Date(now.getFullYear(), 0, 1);
+      rangeEnd = new Date(now.getFullYear(), 11, 31);
+      rangeEnd.setHours(23, 59, 59, 999);
     }
-    return { start, end: now };
-  };
 
-  const { start, end } = getDateRange(selectedRange);
+    setStart(rangeStart);
+    setEnd(rangeEnd);
+  }, [selectedRange]);
 
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [completedTasksCount, setCompletedTasksCount] = useState(0);
 
+  const flowHistory = useFlowHistory(10000);
+
+  // Filter flow history by selected date range
+  const filteredFlowHistory = flowHistory.filter((s) => {
+    const snapDate = new Date(s.timestamp);
+    return snapDate >= start && snapDate <= end;
+  });
+
+  // Flow metrics from filtered snapshots
+  const totalSnapshots = filteredFlowHistory.length;
+  const flowSnapshots = filteredFlowHistory.filter((s) => s.isInFlow).length;
+  const flowPercentage =
+    totalSnapshots > 0 ? Math.round((flowSnapshots / totalSnapshots) * 100) : 0;
+
+  const avgKeystrokes =
+    totalSnapshots > 0
+      ? Math.round(
+          filteredFlowHistory.reduce(
+            (sum, s) => sum + (s.keystrokeCount || 0),
+            0
+          ) / totalSnapshots
+        )
+      : 0;
+
+  const avgMouseDistance =
+    totalSnapshots > 0
+      ? (
+          filteredFlowHistory.reduce((sum, s) => sum + s.mouseDistance, 0) /
+          totalSnapshots
+        ).toFixed(2)
+      : 0;
+
+  const eyesOnScreenPct =
+    totalSnapshots > 0
+      ? Math.round(
+          (filteredFlowHistory.reduce(
+            (sum, s) => sum + (s.eyesOnScreen ? 1 : 0),
+            0
+          ) /
+            totalSnapshots) *
+            100
+        )
+      : 0;
+
   useEffect(() => {
-  // Fetch tasks
-  fetch("http://localhost:8005/tasks")
-    .then((res) => res.json())
-    .then((data: Task[]) => {
-      setTaskList(data);
+    // Fetch tasks
+    fetch("http://localhost:8005/tasks")
+      .then((res) => res.json())
+      .then((data: Task[]) => {
+        setTaskList(data);
 
-      // Calculate completed tasks within selected range
-      const completedInRange = data.filter(
-        (task) =>
-          task.completed &&
-          task.completedAt &&
-          new Date(task.completedAt) >= start &&
-          new Date(task.completedAt) <= end
-      ).length;
+        // Calculate completed tasks within selected range
+        const completedInRange = data.filter(
+          (task) =>
+            task.completed &&
+            task.completedAt &&
+            new Date(task.completedAt) >= start &&
+            new Date(task.completedAt) <= end
+        ).length;
 
-      setCompletedTasksCount(completedInRange);
-    })
-    .catch(console.error);
-}, [selectedRange]);
+        setCompletedTasksCount(completedInRange);
+      })
+      .catch(console.error);
+  }, [selectedRange]);
 
   useEffect(() => {
     fetch("http://localhost:8005/insights/summary", {
@@ -156,10 +210,51 @@ export default function Insights() {
           <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             Tasks Completed
           </h2>
-          <p className="text-3xl font-bold text-blue-600">{completedTasksCount}</p>
+          <p className="text-3xl font-bold text-blue-600">
+            {completedTasksCount}
+          </p>
           {/* <p className="text-sm text-gray-500 dark:text-gray-400">
             {start.toLocaleDateString()} – {end.toLocaleDateString()}
           </p> */}
+        </div>
+
+        {/* Flow State % */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+            Flow State
+          </h2>
+          <p className="text-3xl font-bold text-purple-500">
+            {flowPercentage}%
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Time spent in flow
+          </p>
+        </div>
+
+        {/* Eyes on Screen */}
+        {/* <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+            Eyes on Screen
+          </h2>
+          <p className="text-3xl font-bold text-green-500">
+            {eyesOnScreenPct}%
+          </p>
+        </div> */}
+
+        {/* Avg Keystrokes */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+            Avg Keystrokes / 10s
+          </h2>
+          <p className="text-3xl font-bold text-blue-600">{avgKeystrokes}</p>
+        </div>
+
+        {/* Avg Mouse Distance */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+            Avg Mouse Distance / 10s
+          </h2>
+          <p className="text-3xl font-bold text-blue-600">{avgMouseDistance}</p>
         </div>
       </div>
 
