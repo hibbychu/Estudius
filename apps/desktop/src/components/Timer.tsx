@@ -3,7 +3,7 @@ import { useTimerStore } from "../state/store";
 import { useEyeDetectorStatus } from "../hooks/useEyeDetectorStatus";
 import { useActivityStatus } from "../hooks/useActivityStatus";
 import { useFlowDetection } from "../hooks/useFlowDetection";
-import { useFlowHistory } from '../hooks/useFlowHistory'; // or wherever you defined it
+import { useFlowHistory } from "../hooks/useFlowHistory"; // or wherever you defined it
 
 // Music lists
 const MUSIC_LIST = [
@@ -18,7 +18,11 @@ const BREAK_MUSIC_LIST = [{ name: "Silent", src: "" }];
 
 export const BACKGROUND_LIST = [
   { name: "Default", src: "" },
-  { name: "Anime Girl Video", type: "video", src: "/backgrounds/Anime Girl.mp4" },
+  {
+    name: "Anime Girl Video",
+    type: "video",
+    src: "/backgrounds/Anime Girl.mp4",
+  },
   { name: "Cafe Video", type: "video", src: "/backgrounds/Cafe.mp4" },
   { name: "Custom URL", src: "__custom__" },
 ];
@@ -197,14 +201,13 @@ const Timer: React.FC = () => {
     const newValue = !trackingEnabled;
     setTrackingEnabled(newValue);
     try {
-      const response = await fetch(
-        `http://localhost:8001/activity_monitor`,
-        {
-          method: newValue ? "POST" : "DELETE",
-        }
-      );
+      const response = await fetch(`http://localhost:8001/activity_monitor`, {
+        method: newValue ? "POST" : "DELETE",
+      });
       if (!response.ok) {
-        throw new Error(`Failed to ${newValue ? "start" : "stop"} activity monitor`);
+        throw new Error(
+          `Failed to ${newValue ? "start" : "stop"} activity monitor`
+        );
       }
       setTrackingStatus(newValue ? "Tracking enabled" : "Tracking disabled");
     } catch (error: any) {
@@ -214,12 +217,12 @@ const Timer: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col max-w-md mx-auto my-2 border border-gray-100 bg-white rounded-xl shadow p-8 space-y-6">
+    <div className="flex flex-col max-w-md mx-auto my-6 border border-gray-100 bg-white rounded-xl shadow p-8 space-y-8">
       {loading && <p className="text-blue-500 font-semibold">Loading...</p>}
       {error && <p className="text-red-600 font-semibold">{error}</p>}
 
       {/* Eyes detection status and toggle */}
-      <div className="flex items-center space-x-2 mb-2">
+      <div className="flex items-center space-x-3 mb-3">
         <input
           id="eye-toggle"
           type="checkbox"
@@ -227,13 +230,17 @@ const Timer: React.FC = () => {
           onChange={() => setRequireEyesToFocus((e) => !e)}
           className="mr-2"
         />
-        <label htmlFor="eye-toggle" className="text-sm font-medium">
+        <label
+          htmlFor="eye-toggle"
+          className="text-sm font-semibold text-gray-700 cursor-pointer"
+        >
           Only count focus time if eyes detected
         </label>
         {requireEyesToFocus && (
           <span
-            className={eyesOnScreen ? "text-green-600" : "text-gray-500"}
-            style={{ fontSize: "1.2em" }}
+            className={`${
+              eyesOnScreen ? "text-green-600" : "text-gray-400"
+            } text-lg select-none`}
           >
             {eyesOnScreen ? "👁️ Eyes detected" : "🙈 Eyes not detected"}
           </span>
@@ -245,30 +252,47 @@ const Timer: React.FC = () => {
           Timer paused: Eyes not detected!
         </div>
       )}
-      
-      <div style={{ position: "fixed", bottom: 10, right: 10, background: "#eee", padding: "0.5rem", borderRadius: "8px", zIndex: 999 }}>
-        <strong>Flow State:</strong> {isInFlow ? "🟢 IN FLOW" : "⚪️ not in flow"}
+
+      <div
+        style={{
+          position: "fixed",
+          bottom: 10,
+          right: 10,
+          background: "#eee",
+          padding: "0.5rem",
+          borderRadius: "8px",
+          zIndex: 999,
+        }}
+      >
+        <strong>Flow State:</strong>{" "}
+        {isInFlow ? "🟢 IN FLOW" : "⚪️ not in flow"}
       </div>
 
       {/* Activity Tracking Toggle */}
-      <div className="flex flex-col space-y-1 mb-4 p-2 border rounded bg-gray-50">
-        <h3 className="text-sm font-semibold">Activity Monitor Status:</h3>
+      <div className="bg-gray-50 rounded-xl p-4 shadow-inner border border-gray-200 space-y-2">
+        <h3 className="text-sm font-semibold text-gray-700">Activity Monitor Status:</h3>
         {activityStatus ? (
           <>
-            <p>Keystrokes (last 10s window): {activityStatus.last_keystroke_count}</p>
-            <p>Mouse Distance (px): {activityStatus.last_mouse_distance.toFixed(2)}</p>
-            <p className="italic text-gray-700">{activityStatus.last_log}</p>
+            <p className="text-gray-600">
+              Keystrokes (last 10s window):{" "}
+              {activityStatus.last_keystroke_count}
+            </p>
+            <p className="text-gray-600"> 
+              Mouse Distance (px):{" "}
+              {activityStatus.last_mouse_distance.toFixed(2)}
+            </p>
+            <p className="italic text-gray-500">{activityStatus.last_log}</p>
           </>
         ) : (
           <p>Loading activity data...</p>
         )}
       </div>
       {trackingEnabled && (
-        <div className="text-green-600 mb-4 font-medium">{trackingStatus}</div>
+        <div className="text-green-600 mb-4 font-semibold">{trackingStatus}</div>
       )}
 
       {/* Timer Info and Cycles */}
-      <div className="flex justify-between w-full items-center text-lg font-semibold mb-2">
+      <div className="flex justify-between items-center text-lg font-semibold mb-4 border-b border-gray-200 pb-3">
         <span>
           Total Focus: {Math.floor(totalFocusSeconds / 60)}m{" "}
           {totalFocusSeconds % 60}s
@@ -276,7 +300,7 @@ const Timer: React.FC = () => {
         <span>Cycles: {cyclesCompleted}</span>
         <button
           onClick={resetCycles}
-          className="ml-4 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+          className="ml-4 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 transition-shadow shadow-md"
           title="Reset Pomodoro Cycles"
         >
           Reset Cycles
@@ -302,19 +326,19 @@ const Timer: React.FC = () => {
         step={1}
         value={secondsLeft}
         onChange={(e) => setSecondsLeft(Number(e.target.value))}
-        className="w-full accent-blue-500 h-2 my-2"
+        className="w-full accent-blue-600 h-2 rounded-md"
       />
 
       {/* Controls */}
-      <div className="space-x-3 mb-2">
+      <div className="space-x-4 mb-6">
         <button
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          className="flex-1 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition"
           onClick={running ? pause : start}
         >
           {running ? "Pause" : "Start"}
         </button>
         <button
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+          className="flex-1 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition"
           onClick={onReset}
         >
           Reset
@@ -322,9 +346,9 @@ const Timer: React.FC = () => {
       </div>
 
       {/* Customization */}
-      <div className="w-full flex flex-col space-y-4 mt-4">
+      <div className="space-y-4">
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-medium w-28">Focus Length</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">Focus Length</label>
           <input
             type="range"
             min={15 * 60}
@@ -332,12 +356,14 @@ const Timer: React.FC = () => {
             step={60}
             value={focusDuration}
             onChange={(e) => setFocusDuration(Number(e.target.value))}
-            className="accent-blue-500 flex-1"
+            className="accent-blue-500 flex-1 rounded-md"
           />
-          <span className="w-8 text-right">{Math.floor(focusDuration / 60)}m</span>
+          <span className="w-8 text-right font-mono text-gray-700">
+            {Math.floor(focusDuration / 60)}m
+          </span>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-medium w-28">Break Length</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">Break Length</label>
           <input
             type="range"
             min={3 * 60}
@@ -347,14 +373,16 @@ const Timer: React.FC = () => {
             onChange={(e) => setBreakDuration(Number(e.target.value))}
             className="accent-green-500 flex-1"
           />
-          <span className="w-8 text-right">{Math.floor(breakDuration / 60)}m</span>
+          <span className="w-8 text-right font-mono text-gray-700">
+            {Math.floor(breakDuration / 60)}m
+          </span>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-medium w-28">Focus Music</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">Focus Music</label>
           <select
             value={focusMusic}
             onChange={(e) => setFocusMusic(e.target.value)}
-            className="flex-1 p-1 rounded border border-blue-200"
+            className="flex-1 p-2 rounded border border-blue-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             {MUSIC_LIST.map((m) => (
               <option key={m.src} value={m.src}>
@@ -364,11 +392,11 @@ const Timer: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-medium w-28">Break Music</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">Break Music</label>
           <select
             value={breakMusic}
             onChange={(e) => setBreakMusic(e.target.value)}
-            className="flex-1 p-1 rounded border border-green-200"
+            className="flex-1 p-2 rounded border border-green-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"
           >
             {BREAK_MUSIC_LIST.map((m) => (
               <option key={m.src} value={m.src}>
@@ -378,7 +406,7 @@ const Timer: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-medium w-28">Background</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">Background</label>
           <div className="flex-1">
             <select
               value={background}
@@ -387,7 +415,7 @@ const Timer: React.FC = () => {
                 setBackground(value);
                 if (value !== "__custom__") setCustomBackgroundURL(""); // Clear if not custom
               }}
-              className="w-full p-1 rounded border border-purple-200"
+              className="w-full p-2 rounded border border-purple-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
             >
               {BACKGROUND_LIST.map((b) => (
                 <option key={b.src || b.name} value={b.src}>
@@ -400,14 +428,15 @@ const Timer: React.FC = () => {
               <input
                 type="text"
                 placeholder="Paste image/video URL"
-                className="mt-2 w-full border rounded p-1"
+                className="mt-3 w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
                 value={customBackgroundURL}
                 onChange={(e) => {
                   const url = e.target.value;
                   setCustomBackgroundURL(url);
                 }}
                 onBlur={() => {
-                  if (customBackgroundURL.trim()) setBackground(customBackgroundURL);
+                  if (customBackgroundURL.trim())
+                    setBackground(customBackgroundURL);
                 }}
               />
             )}
