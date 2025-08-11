@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 import json
 from pathlib import Path
@@ -11,12 +11,12 @@ router = APIRouter()
 DATA_FILE = Path(__file__).parent.parent / "data" / "tasks.json"
 
 class Task(BaseModel):
-    id: str = str(uuid.uuid4())
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     text: str
     completed: bool = False
-    createdAt: str = datetime.utcnow().isoformat()
+    createdAt: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
     completedAt: Optional[str] = None
-    updatedAt: str = datetime.utcnow().isoformat()
+    updatedAt: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
 
 def load_tasks() -> List[Task]:
     try:
