@@ -8,11 +8,8 @@ export const useOnlineUsers = (user: OnlineUser | null) => {
   useEffect(() => {
     if (!user) return;
 
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const host = window.location.hostname;
-    const port = 8002; // Your FastAPI backend port
-
-    const ws = new WebSocket(`${protocol}://${host}:${port}/ws`);
+    const backendIP = "172.20.10.2"; // Laptop A
+    const ws = new WebSocket(`ws://${backendIP}:8002/ws`);
 
     ws.onopen = () => {
       ws.send(JSON.stringify({ name: user.name, avatar: user.avatar }));
