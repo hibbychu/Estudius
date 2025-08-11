@@ -73,7 +73,7 @@ function App() {
                       to={to}
                       end={to === "/"}
                       className={({ isActive }) =>
-                        `px-3 py-2 rounded-md text-sm font-medium ${
+                        `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                           isActive
                             ? "bg-gray-900 text-white hover:text-indigo-200"
                             : "text-gray-500 hover:bg-gray-700 hover:text-white"
@@ -88,7 +88,7 @@ function App() {
                 {/* Right side - auth area */}
                 <div className="flex items-center space-x-4">
                   {isLoggedIn ? (
-                    <div className="relative">
+                    <div className="relative flex items-center gap-2">
                       <AvatarDropdown user={user} logout={logout} />
                     </div>
                   ) : (

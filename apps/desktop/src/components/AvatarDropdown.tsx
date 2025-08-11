@@ -29,12 +29,19 @@ function AvatarDropdown({ user, logout }: { user: any; logout: () => void }) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <img
-        src={user?.avatar || "/assets/icons/user.png"}
-        alt={user?.name || "User avatar"}
-        className="w-6 h-6 rounded-full border-2 border-gray-400 hover:border-indigo-500 cursor-pointer"
-        onClick={() => setOpen(!open)}
-      />
+      <div
+        className="flex items-center gap-2 cursor-pointer font-semibold text-gray-400 border-gray-400 hover:text-indigo-500 hover:border-indigo-500 transition-colors duration-200"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <img
+          src={user?.avatar || "/assets/icons/user.png"}
+          alt={user?.name || "User avatar"}
+          className="w-6 h-6 rounded-full border-2 "
+        />
+        <span>
+          {user?.name || ""}
+        </span>
+      </div>
 
       {open && (
         <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-20">
