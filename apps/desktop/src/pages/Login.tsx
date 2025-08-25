@@ -41,6 +41,7 @@ export default function Login() {
       }
 
       const user = data.user || { name: email, avatar: "/assets/icons/user.png" };
+      localStorage.setItem("token", data.access_token);
       login(user, data.access_token);
       navigate("/");
     } catch (error) {

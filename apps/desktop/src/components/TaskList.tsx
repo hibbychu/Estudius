@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuthStore } from "../state/authStore"; // your auth state
 
 interface Task {
   id: string;
@@ -7,65 +8,77 @@ interface Task {
   createdAt: string;
   completedAt?: string | null;
   updatedAt: string;
+  user_email: string;
 }
 
 export default function TaskList() {
+  const token = useAuthStore((state) => state.token);
   const [task, setTask] = useState("");
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
+  const [error, setError] = useState("");
+
+  const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+    options.headers = {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+    const res = await fetch(url, options);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.detail || "Unknown error");
+    return data;
+  };
+
+  // Fetch tasks
+  useEffect(() => {
+    fetchWithAuth("http://localhost:8005/tasks")
+      .then((data: Task[]) => setTaskList(data))
+      .catch((err: Error) => setError(err.message));
+  }, [token]);
 
   // Add task
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && task.trim()) {
-      e.preventDefault();
-      const newTask = { text: task.trim(), completed: false };
-
-      fetch("http://localhost:8005/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTask),
+    if (e.key !== "Enter" || !task.trim()) return;
+    e.preventDefault();
+    setError("");
+    fetchWithAuth("http://localhost:8005/tasks", {
+      method: "POST",
+      body: JSON.stringify({ text: task.trim(), completed: false }),
+    })
+      .then((createdTask: Task) => {
+        setTaskList((prev) => [...prev, createdTask]);
+        setTask("");
       })
-        .then((res) => res.json())
-        .then((createdTask) => {
-          setTaskList((prev) => [...prev, createdTask]);
-          setTask(""); // ✅ clears textbox
-        })
-        .catch(console.error);
-    }
+      .catch((err: Error) => setError(err.message));
   };
 
   // Delete task
   const deleteTask = (id: string) => {
-    fetch(`http://localhost:8005/tasks/${id}`, { method: "DELETE" })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to delete task");
-        setTaskList((prev) => prev.filter((t) => t.id !== id));
-      })
-      .catch(console.error);
+    setError("");
+    fetchWithAuth(`http://localhost:8005/tasks/${id}`, { method: "DELETE" })
+      .then(() => setTaskList((prev) => prev.filter((t) => t.id !== id)))
+      .catch((err: Error) => setError(err.message));
   };
 
   // Toggle completion
   const toggleTaskCompletion = (task: Task) => {
+    setError("");
     const updatedTask = {
       ...task,
       completed: !task.completed,
       completedAt: !task.completed ? new Date().toISOString() : null,
       updatedAt: new Date().toISOString(),
     };
-
-    fetch(`http://localhost:8005/tasks/${task.id}`, {
+    fetchWithAuth(`http://localhost:8005/tasks/${task.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedTask),
     })
-      .then((res) => res.json())
-      .then((updated) =>
-        setTaskList((prev) =>
-          prev.map((t) => (t.id === updated.id ? updated : t))
-        )
+      .then((updated: Task) =>
+        setTaskList((prev) => prev.map((t) => (t.id === updated.id ? updated : t)))
       )
-      .catch(console.error);
+      .catch((err: Error) => setError(err.message));
   };
 
   // Edit
@@ -86,43 +99,36 @@ export default function TaskList() {
     const taskToUpdate = taskList.find((t) => t.id === id);
     if (!taskToUpdate) return;
 
-    const updatedTask = {
-      ...taskToUpdate,
-      text: trimmedText,
-      updatedAt: new Date().toISOString(),
-    };
+    const updatedTask = { ...taskToUpdate, text: trimmedText, updatedAt: new Date().toISOString() };
 
-    fetch(`http://localhost:8005/tasks/${id}`, {
+    setError("");
+    fetchWithAuth(`http://localhost:8005/tasks/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedTask),
     })
-      .then((res) => res.json())
-      .then((updated) => {
-        setTaskList((prev) =>
-          prev.map((t) => (t.id === updated.id ? updated : t))
-        );
+      .then((updated: Task) => {
+        setTaskList((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
         cancelEdit();
       })
-      .catch(console.error);
+      .catch((err: Error) => setError(err.message));
   };
 
-  // Fetch tasks on mount
-  useEffect(() => {
-    fetch("http://localhost:8005/tasks")
-      .then((res) => res.json())
-      .then((data) => setTaskList(data))
-      .catch(console.error);
-  }, []);
+  if (!token) 
+  return (
+    <div className="flex justify-center items-center h-40">
+      <p className="bg-yellow-100 text-yellow-800 px-6 py-2 rounded-lg shadow text-center text-md font-medium">
+        Please log in to view your tasks.
+      </p>
+    </div>
+  );
 
   return (
     <div className="flex flex-col max-w-md mx-auto my-2 bg-white rounded-xl shadow p-8 space-y-6">
+      {error && <p className="text-red-600 text-center">{error}</p>}
+
       {/* Input */}
       <div>
-        <label
-          htmlFor="task"
-          className="block text-md font-semibold text-gray-950"
-        >
+        <label htmlFor="task" className="block text-md font-semibold text-gray-950">
           Tasks
         </label>
         <div className="mt-2">
@@ -142,10 +148,7 @@ export default function TaskList() {
       {taskList.length > 0 && (
         <ul className="space-y-2">
           {taskList.map((task) => (
-            <li
-              key={task.id}
-              className="flex items-center justify-between space-x-4"
-            >
+            <li key={task.id} className="flex items-center justify-between space-x-4">
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -153,7 +156,6 @@ export default function TaskList() {
                   onChange={() => toggleTaskCompletion(task)}
                   className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
                 />
-
                 {editingId === task.id ? (
                   <input
                     type="text"
@@ -169,9 +171,7 @@ export default function TaskList() {
                   />
                 ) : (
                   <label
-                    className={`text-gray-800 ${
-                      task.completed ? "line-through text-gray-400" : ""
-                    }`}
+                    className={`text-gray-800 ${task.completed ? "line-through text-gray-400" : ""}`}
                     onDoubleClick={() => startEdit(task.id, task.text)}
                   >
                     {task.text}
@@ -200,3 +200,5 @@ export default function TaskList() {
     </div>
   );
 }
+
+

@@ -77,6 +77,8 @@ const Timer: React.FC = () => {
 
   const { isInFlow } = useFlowDetection();
 
+  const [showActivityPanel, setShowActivityPanel] = useState(false);
+
   // to console log the history of detections
   const history = useFlowHistory(5000); // poll every 5 seconds
   useEffect(() => {
@@ -221,7 +223,7 @@ const Timer: React.FC = () => {
       {loading && <p className="text-blue-500 font-semibold">Loading...</p>}
       {error && <p className="text-red-600 font-semibold">{error}</p>}
 
-      {/* Eyes detection status and toggle */}
+      {/* Eyes detection status and toggle
       <div className="flex items-center space-x-3 mb-3">
         <input
           id="eye-toggle"
@@ -247,11 +249,11 @@ const Timer: React.FC = () => {
         )}
       </div>
       {/* Paused warning if not detected */}
-      {requireEyesToFocus && !eyesOnScreen && running && (
-        <div className="bg-yellow-100 text-yellow-800 rounded px-2 py-1 mb-2 font-semibold">
-          Timer paused: Eyes not detected!
-        </div>
-      )}
+      {/* {requireEyesToFocus && !eyesOnScreen && running && (
+          <div className="bg-yellow-100 text-yellow-800 rounded px-2 py-1 mb-2 font-semibold">
+            Timer paused: Eyes not detected!
+          </div>
+        )} */}
 
       <div
         style={{
@@ -267,29 +269,6 @@ const Timer: React.FC = () => {
         <strong>Flow State:</strong>{" "}
         {isInFlow ? "🟢 IN FLOW" : "⚪️ not in flow"}
       </div>
-
-      {/* Activity Tracking Toggle */}
-      <div className="bg-gray-50 rounded-xl p-4 shadow-inner border border-gray-200 space-y-2">
-        <h3 className="text-sm font-semibold text-gray-700">Activity Monitor Status:</h3>
-        {activityStatus ? (
-          <>
-            <p className="text-gray-600">
-              Keystrokes (last 10s window):{" "}
-              {activityStatus.last_keystroke_count}
-            </p>
-            <p className="text-gray-600"> 
-              Mouse Distance (px):{" "}
-              {activityStatus.last_mouse_distance.toFixed(2)}
-            </p>
-            <p className="italic text-gray-500">{activityStatus.last_log}</p>
-          </>
-        ) : (
-          <p>Loading activity data...</p>
-        )}
-      </div>
-      {trackingEnabled && (
-        <div className="text-green-600 mb-4 font-semibold">{trackingStatus}</div>
-      )}
 
       {/* Timer Info and Cycles */}
       <div className="flex justify-between items-center text-lg font-semibold mb-4 border-b border-gray-200 pb-3">
@@ -348,7 +327,9 @@ const Timer: React.FC = () => {
       {/* Customization */}
       <div className="space-y-4">
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-semibold w-28 text-gray-700">Focus Length</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">
+            Focus Length
+          </label>
           <input
             type="range"
             min={15 * 60}
@@ -363,7 +344,9 @@ const Timer: React.FC = () => {
           </span>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-semibold w-28 text-gray-700">Break Length</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">
+            Break Length
+          </label>
           <input
             type="range"
             min={3 * 60}
@@ -378,7 +361,9 @@ const Timer: React.FC = () => {
           </span>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-semibold w-28 text-gray-700">Focus Music</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">
+            Focus Music
+          </label>
           <select
             value={focusMusic}
             onChange={(e) => setFocusMusic(e.target.value)}
@@ -392,7 +377,9 @@ const Timer: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-semibold w-28 text-gray-700">Break Music</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">
+            Break Music
+          </label>
           <select
             value={breakMusic}
             onChange={(e) => setBreakMusic(e.target.value)}
@@ -406,7 +393,9 @@ const Timer: React.FC = () => {
           </select>
         </div>
         <div className="flex items-center space-x-4">
-          <label className="text-sm font-semibold w-28 text-gray-700">Background</label>
+          <label className="text-sm font-semibold w-28 text-gray-700">
+            Background
+          </label>
           <div className="flex-1">
             <select
               value={background}
@@ -442,6 +431,89 @@ const Timer: React.FC = () => {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Activity Tracking Toggle
+      <div className="bg-gray-50 rounded-xl p-4 shadow-inner border border-gray-200 space-y-2">
+        <h3 className="text-sm font-semibold text-gray-700">Activity Monitor Status:</h3>
+        {activityStatus ? (
+          <>
+            <p className="text-gray-600">
+              Keystrokes (last 10s window):{" "}
+              {activityStatus.last_keystroke_count}
+            </p>
+            <p className="text-gray-600"> 
+              Mouse Distance (px):{" "}
+              {activityStatus.last_mouse_distance.toFixed(2)}
+            </p>
+            <p className="italic text-gray-500">{activityStatus.last_log}</p>
+          </>
+        ) : (
+          <p>Loading activity data...</p>
+        )}
+      </div>
+      {trackingEnabled && (
+        <div className="text-green-600 mb-4 font-semibold">{trackingStatus}</div>
+      )} */}
+
+      {/* Collapsible Activity Panel */}
+      <div className="bg-gray-50 rounded-xl shadow-inner border border-gray-200">
+        <button
+          onClick={() => setShowActivityPanel((prev) => !prev)}
+          className="w-full flex justify-between items-center px-4 py-2 text-sm font-semibold bg-white text-gray-700 hover:bg-gray-100 rounded-t-xl"
+        >
+          <span>Activity & Eye Tracking</span>
+          <span className="text-lg">{showActivityPanel ? "▲" : "▼"}</span>
+        </button>
+
+        {showActivityPanel && (
+          <div className="p-4 space-y-2">
+            {/* Eye detection toggle */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={requireEyesToFocus}
+                  onChange={() => setRequireEyesToFocus((e) => !e)}
+                  className="cursor-pointer"
+                />
+                <label className="text-sm text-gray-700 cursor-pointer">
+                  Only count focus time if eyes detected
+                </label>
+              </div>
+
+              {requireEyesToFocus && (
+                <div
+                  className={`text-xs font-medium px-2 py-1 rounded-md w-fit ${
+                    eyesOnScreen
+                      ? "bg-green-100 text-green-700 border border-green-300"
+                      : "bg-gray-100 text-gray-500 border border-gray-300"
+                  }`}
+                >
+                  {eyesOnScreen ? "👁️ Eyes detected" : "🙈 Eyes not detected"}
+                </div>
+              )}
+            </div>
+
+            {/* Activity tracking */}
+            {activityStatus ? (
+              <>
+                <p className="text-gray-600">
+                  Keystrokes: {activityStatus.last_keystroke_count}
+                </p>
+                <p className="text-gray-600">
+                  Mouse Distance:{" "}
+                  {activityStatus.last_mouse_distance.toFixed(2)} px
+                </p>
+                <p className="italic text-gray-500">
+                  {activityStatus.last_log}
+                </p>
+              </>
+            ) : (
+              <p className="text-gray-500">Loading activity data...</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Audio elements */}
